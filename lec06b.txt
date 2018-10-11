@@ -30,32 +30,51 @@ representation.
 
   (define-struct bq [front back])
 
-  (define empty-bq (make-bq '() '()))
+  ; "Smart constructor" enforces invariant that the back is empty
+  ; only if the front is empty as well.
+  (define (build-bq front back)
+    (cond
+      [(empty? front) (make-bq (reverse back) '())]
+      [else           (make-bq front back)]))
 
-  (define (empty-queue q)
-    (and (empty? (bq-front q)) (empty? (bq-back q))))
+  (define empty-bq (build-bq '() '()))
+
+  (define (empty-queue? q)
+    (empty? (bq-front q)))
 
   (define (enqueue q x)
-    (make-bq (bq-front q) (cons x (bq-back q))))
-
-  (define (dequeue q)
-    (cond
-      [(cons? (bq-front q))
-       (make-bq (rest (bq-front q)) (bq-back q))]
-      [else
-       (make-bq (rest (reverse (bq-back q))) '())]))
-;; Why not
-;;     (make-bq '() (reverse (rest (reverse (bq-back q)))))
-;; ?
+    (build-bq (bq-front q) (cons x (bq-back q))))
 
   (define (get-head q)
-    (cond
-      [(cons? (bq-front q))
-       (first (bq-front q))]
-      [else
-       (first (reverse (bq-last q)))]))
+    (first (bq-front q)))
+
+  (define (dequeue q)
+    (build-bq (rest (bq-front q)) (bq-back bq)))
 
 What’s the time complexity of our queue operations?
+
+Let's analyze them in isolation first:
+
+ - build-bq in not a queue operation, but it's used by others, so we
+   will analyze it:
+
+    - If front is empty then we reverse back, which has length n,
+      hence O(n).
+
+    - If front is non-empty, then we cons, hence O(1).
+
+ - enqueue does a cons and a build-bq. The cons portion is O(1). What
+   about the build-bq? If (bq-front q) is empty then so is (bq-back q)
+   (by the invariant), so build-bq is only reversing a list of length 1;
+   hence O(1). If (bq-front q) is non-empty, then build-bq does no
+   reversing, hence O(1). Hence, enqueue is O(1).
+
+ - get-head does a first, which is O(1).
+
+ - dequeue does a rest, which is O(1), and a build-bq. If
+   (rest (bq-front q)) is empty then build-bq reverses the back, hence
+   O(n). We have no way to know whether it will be empty or not; hence,
+   dequeue is O(n).
 
 If we have n operations, how long does it take? Naïvely, O(n²). The
 length of the queue is bounded by the number of operations, hence we
@@ -65,31 +84,25 @@ Well, `enqueue` just does a cons and make-bq, each of which is O(1), so
 `enqueue` is O(1). But both `dequeue` and `get-head` occasionally have
 to reverse a list, making them O((bq-back q)).
 
-For our analysis, we make two assumptions:
+But when analyzing a sequence of operations, instead of just one, we can
+do better. For our analysis, we make one assumption:
 
   - The queue is treated linearly, in the sense that we never look at
     old versions of it. Every time we change it with a queue operation,
     we use that new queue going forward.
 
-  - We always use `get-head` and `dequeue` in tandem. That is, when we
-    observe the head of the queue, we also discard it from the queue.
+(Is this a realistic assumption? Consider graph BFS.)
 
-(Are these realistic assumptions? Consider graph BFS.)
-
-So we can think of sequences of operations like so:
-
-    (enqueue | (get-head; dequeue))*
-
-This means any number (*) of either (|) enqueue or get-head followed by
-(;) dequeue. (Actually, we'll just ignore the get-heads, as they do the
-same work as the dequeues.)
+Also, since get-head is O(1) and doesn't return a new queue, it's not
+really relevant for our analysis. So, we can think of a sequence of
+opeartions just being some enqueues and dequeues, in any order.
 
 Then we can show that while some individual queue operations are linear
 time, any sequence of k queue operations is just O(k), not O(k²). This
 is because each list node, by the linearity condition, is subject to
-reversal at most twice (once for get-head and once for dequeue). In k
-steps we can enqueue at most k element, which means we can take at most
-2k reversal steps.
+reversal at most once (when it gets moved from back to front). In k
+steps we can enqueue at most k elements, which means we can take at most
+k reversal steps after that.
 
 Let’s consider a simple example of starting with an empty queue,
 enqueueing k times and then dequeueing k times. So we have:
@@ -103,3 +116,4 @@ whole sequence together = O(k)
 
 If we divide the total time (O(k)) by the number of operations (O(1)),
 we get an *amortized time* of O(1) for each operation.
+
