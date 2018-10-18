@@ -194,7 +194,7 @@ If we wanted to find someone and that someone wasn't at the
 top of the tree, we'd look in the left and if they weren't
 there, we'd look in the right, right?
 
-In the spirit of our problem with the lsits, have we done
+In the spirit of our problem with the lists, have we done
 any better yet?
 
 No! 

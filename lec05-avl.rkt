@@ -5,7 +5,9 @@
 ;;  (make-db number AVL-tree AVL-tree number)
 ;;  "leaf"
 ;; INVARIANT :
-;;   (<= -1 (- (height left) (height right)) 1)
+;;   (<= (abs (- (height left)
+;;               (height right)))
+;;       1)
 (define-struct db (value left right height))
 
 ;; height : AVL-tree -> Number
@@ -144,7 +146,7 @@
 ;; - "right" or
 ;; - "even"
 
-;; balance : AVL-tree -> Balance
+;; balance : AVL-tree[not empty] -> Balance
 ;; assumption: db is not "leaf"
 (check-expect (balance (build-db 2 "leaf" "leaf")) "even")
 (check-expect (balance (build-db 2 (build-db 1 "leaf" "leaf") "leaf")) "left")

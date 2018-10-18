@@ -1,4 +1,4 @@
-Binomial Heaps at Priority Queues
+Binomial Heaps as Priority Queues
 ---------------------------------
 
 A priority queue is an ADT that looks like a bunch of elements enclosed
@@ -53,7 +53,7 @@ but for now what it means is that we have these contracts:
   find-min : binomial-heap -> number
   remove-min : binomial-heap -> binomial-heap
 
-The last three functions consume non-empty binomial heaps.
+The last two functions consume non-empty binomial heaps.
 
 There is a simple implementation, where we represent the heap as a
 list. Each new element just goes on the front and then when we want to

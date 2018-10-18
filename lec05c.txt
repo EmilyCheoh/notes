@@ -52,7 +52,7 @@ Here is the data definition for an AVL tree:
 ;;  "leaf"
 ;; INVARIANT :
 ;;   the BST invariant, PLUS
-;;   (<= -1 (- (height left) (height right)) 1)
+;;   (<= (abs (- (height left) (height right))) 1)
 (define-struct node (value left right height))
 
 The height of the tree is distance to the furthest "leaf" and the
