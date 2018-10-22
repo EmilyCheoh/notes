@@ -24,7 +24,7 @@ A priority queue supports these operations:
    (insert {x ...} y) = {xs ... y xl ...}
        where xs is the elements of {x ...} < y and
              xl is the elements of {x ...} > y
-   (find-min {x1 x2 ...}) = x1
+   (find-min {x1 x2 ...}) = x1 (where x1 is the the smallest entry)
    (remove-min {x1 x2 ...}) = {x2...} (where x1 is the the smallest entry)
 
 The main thing to note here is no matter what order we add values to
@@ -203,8 +203,8 @@ Here's the data definitions:
 
 ;; A [Binomial-Tree-Ranked n] is
 ;;   (make-node Number [Binomial-Tree-List n])
-;; INVARIANT: the number is smaller than any of
-;;            the numbers in the rest of the tree
+;; INVARIANT: the `Number` is smaller than any of
+;;            the numbers in `[Binomial-Tree-List n]`
 ;; (this is the heap invariant)
 
 ;; A [Binomial-Tree-List 0] is '()
