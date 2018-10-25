@@ -37,35 +37,35 @@
 # New data definition (now with 50% fewer comments!)
 let binary_search_tree = OrC(False,node?)
 struct node:
-  let num   : num?
-  let left  : binary_search_tree
-  let right : binary_search_tree
+    let num: num?
+    let left: binary_search_tree
+    let right: binary_search_tree
 # INVARIANT: num < smallest number in `right`
 #            and larger than largest in `left`
 
 # example trees:
 
-let t1 : binary_search_tree = node(1, node(0, False, False), node(2, False, False))
-let t2 : binary_search_tree = node(0, False, node(1, False, node(2, False, False)))
-let t3 : binary_search_tree = node(2, node(1, node(0, False, False), False), False)
+let t1: binary_search_tree = node(1, node(0, False, False), node(2, False, False))
+let t2: binary_search_tree = node(0, False, node(1, False, node(2, False, False)))
+let t3: binary_search_tree = node(2, node(1, node(0, False, False), False), False)
 
 # Lets compare the lookup function; note that the signature is now in the code itself.
 
 # to determine if `n` is in `t`
-def lookup(t : binary_search_tree, n : num?) -> bool? :
-    if t == False :
+def lookup(t: binary_search_tree, n: num?) -> bool?:
+    if t == False:
         False
-    else :
-        if n < t.num :
+    else:
+        if n < t.num:
             lookup(t.left,n)
-        elif n == t.num : 
+        elif n == t.num: 
             True
-        else :
+        else:
             lookup(t.right,n)
 
 # examples as tests
 
-test 'lookup tests' :
+test 'lookup tests':
     assert_eq lookup(t1,-1), False
     assert_eq lookup(t1,0),  True
     assert_eq lookup(t1,1),  True
