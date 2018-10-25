@@ -36,9 +36,10 @@
 #
 # New data definition (now with 50% fewer comments!)
 let binary_search_tree = OrC(False,node?)
-defstruct node (num   : num?, 
-                left  : binary_search_tree, 
-                right : binary_search_tree)
+struct node:
+  let num   : num?
+  let left  : binary_search_tree
+  let right : binary_search_tree
 # INVARIANT: num < smallest number in `right`
 #            and larger than largest in `left`
 

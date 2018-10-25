@@ -31,7 +31,9 @@
 # in order to have any memory of anything, we have to put that thing
 # into a struct. (NB: the contracts are now actual code! Not comments!)
 
-defstruct count (num : int?)
+struct count:
+  let num : int?
+
 let the_count = count(0)
 
 def sum_args(x : int?) :
@@ -223,7 +225,9 @@ assert_eq intentionally_equal?(c3,c3), True
 
 # A new data definition: note this is code now!
 let linked_list = OrC(link?,False)
-defstruct link(num : num?, next : linked_list)
+struct link:
+  let num : num?
+  let next : linked_list
 
 let a = link(0,False)
 let b = link(1,False)
@@ -327,5 +331,5 @@ def lookup(s : str?, n: num?) -> VoidC :
 
 # Well, one reason is that you are building the back end to some web or
 # GUI interface and these are the functions that correspond to clicks in
-# the website (and this website isn't implemented using 2htdp/universe
-# -- or, perhaps you are implementing 2htdp/universe!)
+# the website (and this website isn't implemented using 2htdp/world
+# -- or, perhaps you are implementing 2htdp/world!)

@@ -27,7 +27,9 @@
 # 
 # new data definition:
 
-defstruct stream (ele : AnyC, rest : FunC(stream?))
+struct stream:
+  let ele : AnyC
+  let rest : FunC[stream?]
 
 # Look at this for a moment. We've got a function that takes
 # no arguments. Strange, no? Hm. Can we make an example?
@@ -80,8 +82,12 @@ test : assert_eq twos.rest().ele, 2
 test : assert_eq twos.rest().rest().ele, 2
 
 let ListC = OrC(mt?,cons?)
-defstruct mt ()
-defstruct cons(hd : AnyC, tl : ListC)
+struct mt:
+ pass
+
+struct cons:
+ let hd : AnyC
+ let tl : ListC
 
 # to extract the first `n` elements of `s`
 def take(n : nat?, s : stream?) -> ListC :
@@ -113,7 +119,7 @@ test : assert_eq take(3,nats), cons(0,cons(1,cons(2,mt())))
 
 # Lets generalize add1-stream to map-stream:
 
-def map_stream(f : FunC(AnyC,AnyC), s: stream?) -> stream? :
+def map_stream(f : FunC[AnyC,AnyC], s: stream?) -> stream? :
   stream(f(s.ele),λ : map_stream(f, s.rest()))
 
 # How would we make a stream of the perfect squares?
@@ -128,7 +134,7 @@ test : assert_eq take(5, squares), cons(0, cons(1, cons(4, cons(9, cons(16, mt()
 
 # How about filtering a stream:
 
-def filter_stream(p : FunC(AnyC,bool?), s : stream?) -> stream? :
+def filter_stream(p : FunC[AnyC,bool?], s : stream?) -> stream? :
     if (p(s.ele)) :
         stream(s.ele,λ : filter_stream(p,s.rest()))
     else :
