@@ -254,27 +254,27 @@ Lets look more carefully at this problem in a simpler graph.
 
 Clearly that is going to take O(n) time.
 
-What happens for a graph that looks like this, tho:
-
-  start     end
-   /\
-  A  B
+What happens for a graph that looks like this
+(where 0 is not connected to anything):
+         
+    
+  1  2       0 
   |\/|
   |/\|
-  C  D
+  3  4
   |\/|
   |/\|
-  E  F
+  5  6
   |\/|
   |/\|
-  G  H
+  7  8
 
   ....
 
-  W  X
+ 97  98
   |\/|
   |/\|
-  Y  Z
+ 99  100
 
 
 where we ask if 'start' is connected to 'end', but 'end' isn't
@@ -282,6 +282,78 @@ connected to anything at all. So the answer will also be #false, but
 how long does it take to figure that out?
 
 Exponential time.
+|#
 
-We need a new technique to fix this one.
+;; make-bad-graph : Natural -> Graph
+;; construct a graph with the edge pattern above
+(define (make-bad-graph size)
+  (make-graph (+ (* size 2) 1)
+              (λ (x)
+                (cond
+                  [(= x 0) '()]
+                  [(= x (- (* size 2) 1)) '()]
+                  [(= x (* size 2)) '()]
+                  [(odd? x) (list (+ x 2) (+ x 3))]
+                  [(even? x) (list (+ x 1) (+ x 2))]))))
+
+(check-expect ((graph-neighbor (make-bad-graph 1)) 0) '())
+(check-expect ((graph-neighbor (make-bad-graph 1)) 1) '())
+(check-expect ((graph-neighbor (make-bad-graph 1)) 2) '())
+(check-expect ((graph-neighbor (make-bad-graph 2)) 0) '())
+(check-expect ((graph-neighbor (make-bad-graph 2)) 1) '(3 4))
+(check-expect ((graph-neighbor (make-bad-graph 2)) 2) '(3 4))
+(check-expect ((graph-neighbor (make-bad-graph 2)) 3) '())
+(check-expect ((graph-neighbor (make-bad-graph 2)) 4) '())
+(check-expect ((graph-neighbor (make-bad-graph 3)) 0) '())
+(check-expect ((graph-neighbor (make-bad-graph 3)) 1) '(3 4))
+(check-expect ((graph-neighbor (make-bad-graph 3)) 2) '(3 4))
+(check-expect ((graph-neighbor (make-bad-graph 3)) 3) '(5 6))
+(check-expect ((graph-neighbor (make-bad-graph 3)) 4) '(5 6))
+(check-expect ((graph-neighbor (make-bad-graph 3)) 6) '())
+(check-expect ((graph-neighbor (make-bad-graph 3)) 6) '())
+
+(time (route-exists? (make-bad-graph 13) 1 0))
+(time (route-exists? (make-bad-graph 14) 1 0))
+(time (route-exists? (make-bad-graph 15) 1 0))
+(time (route-exists? (make-bad-graph 16) 1 0))
+(time (route-exists? (make-bad-graph 17) 1 0))
+(time (route-exists? (make-bad-graph 18) 1 0))
+
+#|
+
+The problem here is that when we visit a node, we know where
+we have been on the path from the original node to the
+current node, but when we visit the node later, via
+a different path, we no longer remember that we've been
+to that node before.
+
+Remembering the path from the original node to our current
+node is enough information to avoid cycles, but it isn't
+enough information to make sure we visit each node only once.
+
+In order to do that, we need to actually *return* some
+information, so that it can be used by other parts of the
+computation.
+
+If you look carefully at the code, you can see the problem
+there. Specifically, look at any-route-exists? in the
+second `cond` clause:
+
+    (or (route-exists? graph (first srcs) dest)
+        (any-route-exists? graph (rest srcs) dest))
+
+In this code, imagine that we're looking the list containing
+nodes 3 and 4 in the above picture. When the call to
+`route-exists?` happens, we will visit node 7 (and other nodes).
+The call to `any-route-exists?` will then trigger a call
+to `route-exists?` with the node 4, which will also
+eventually visit 7 (and other nodes). But the accumulator
+cannot track that. Indeed, we do not know what nodes the
+call to `route-exists?` visited until it actually visits
+them. To record that information, we need to adapt route-exists?
+so that it returns that information (in addition to the
+boolean it is already returning). Once we do that, we
+can take that information out of the call to `route-exists?`
+and add it into the accumulator for the call to
+`any-route-exists?`.
 |#
