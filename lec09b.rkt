@@ -54,9 +54,9 @@ let ones: stream? = stream(1, λ: ones)
 #
 # Using our hand-evaluation rules, we can do this now:
 #
-#   ones.num = 1
-#   ones.rest().num = 1
-#   ones.rest().rest().num = 1
+#   ones.ele = 1
+#   ones.rest().ele = 1
+#   ones.rest().rest().ele = 1
 #
 #
 # So, what about the template?
@@ -66,7 +66,7 @@ let ones: stream? = stream(1, λ: ones)
 #
 
 def stream_template(s: stream?):
-    s.num
+    s.ele
     s.rest()
 
 # Lets try to write a function on streams, called add1-stream:
