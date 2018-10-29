@@ -65,9 +65,9 @@ let ones: stream? = stream(1, λ: ones)
 #   huh?)
 #
 
-def stream_template(s: stream?):
+def stream_template(s: stream?, etc):
     s.ele
-    s.rest()
+    stream_template(s.rest(), etc)
 
 # Lets try to write a function on streams, called add1-stream:
 #
