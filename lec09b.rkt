@@ -54,9 +54,9 @@ let ones: stream? = stream(1, λ: ones)
 #
 # Using our hand-evaluation rules, we can do this now:
 #
-#   one.num = 1
-#   one.rest().num = 1
-#   one.rest().rest().num = 1
+#   ones.num = 1
+#   ones.rest().num = 1
+#   ones.rest().rest().num = 1
 #
 #
 # So, what about the template?
