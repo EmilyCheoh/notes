@@ -10,40 +10,66 @@ import cons
 # called the Single-Source Shortest Path problem.
 #
 # To work on this problem, first we need a representation of weighted graphs.
-#
-# A WEdge is WEdge(nat?, num?, nat?)
-defstruct WEdge(src: nat?, weight: num?, dst: nat?)
+
+struct WEdge:
+    let src: nat?
+    let weight: num?
+    let dst: nat?
 # Interpretation: an edge exists from `src` to `dst` with weight
 # `weight`.
 
-# A WGraph is WGraph(nat?, (nat?) -> ListOf[WEdge])
-defstruct WGraph(nodes: nat?, edges: FunC(nat?, list?))
-# Interpretation: `nodes` gives the number of nodes in the graph, and
-# the function `edges` is a function that, given a node, returns a
-# list of all departing edges.
+interface WGRAPH:
+    # Returns the number of vertices.
+    def len(self) -> nat?
+    # Returns a list of all WEdges outgoing from `src`.
+    def succs(self, src: nat?) -> Cons.list?
 
-## (Note: WGraph can be used to represent a weighted, directed graph, or
-## an undirected graph as a special case of that. The algorithms below
-## work on both, but our example is an undirected graph.)
+## (Note: WGRAPH can be used to represent a weighted, directed graph, or
+## a weighted, undirected graph as a special case of that. The algorithms
+## below work on both, but our example is an undirected graph.)
 
-# build_wdigraph : nat? VectorOf[Vector[nat?, num?, nat?]] -> WGraph
+class AdjMatWGraph (WGRAPH):
+    # : VecC[VecC[num?]]
+    let rows: VecC
+    
+    def __init__(self, len: nat?):
+        self.rows = [ False; len ]
+        for i in len:
+            self.rows[i] = [ inf; len ]
+        
+    def len(self):
+        self.rows.len()
+        
+    def succs(self, src):
+        let result = nil()
+        let row = self.rows[src]
+        for dst, w in row:
+            if w < inf:
+                result = cons(WEdge(src, w, dst), result)
+        result
+        
+    # Makes `w` the weight of the edge from `src` to `dst`. Use `inf` to
+    # remove an edge.
+    def set_edge(self, src: nat?, w: num?, dst: nat?) -> VoidC:
+        self.rows[src][dst] = w
+
+# build_wdigraph : nat? VecC[Vector[nat?, num?, nat?]] -> AdjMatWGraph
 # Builds a directed graph with `nodes` nodes and the edges specified
 # by `edges`.
-def build_wdigraph(nodes, edges):
-    let adjacencies = [ nil(); nodes ]
-    def cons!(edge, v): adjacencies[v] = cons(edge, adjacencies[v])
+def build_wdigraph(len: nat?, edges: VecC[VecC]) -> AdjMatWGraph?:
+    let result = AdjMatWGraph(len)
     for edge in edges:
-        cons!(WEdge(edge[0], edge[1], edge[2]), edge[0])
-    WGraph(nodes, lambda v: adjacencies[v])
-    
-# build_wugraph : nat? VectorOf[Vector?[nat?, num?, nat?]] -> WGraph
+        result.set_edge(edge[0], edge[1], edge[2])
+    result
+
 # Builds an undirected graph with `nodes` nodes and the edges specified
 # by `edges`.
-def build_wugraph(nodes, edges):
-    let rev_edges = [ [edge[2], edge[1], edge[0]] for edge in edges ]
-    let all_edges = cons_to_vec(app_cons(cons_from_vec(edges),
-                                         cons_from_vec(rev_edges)))
-    build_wdigraph(nodes, all_edges)
+def build_wugraph(len: nat?, edges: VecC[VecC]) -> AdjMatWGraph?:
+    let result = AdjMatWGraph(len)
+    for edge in edges:
+        result.set_edge(edge[0], edge[1], edge[2])
+        result.set_edge(edge[2], edge[1], edge[0])
+    result
 
 # Graph from Wikipedia Dijkstra’s algo page
 let A_GRAPH = build_wugraph(7, [
@@ -62,24 +88,19 @@ let A_GRAPH = build_wugraph(7, [
 # on the shortest path to v is u. Then the rest of the shortest path to v
 # is the same as the shortest path to u. So to track shortest paths, we
 # just need to know the path predecessor nodes—the parents in a search tree.
-#
-# An SSSPResult is sssp(VectorOf[Or[nat?, bool?]] VectorOf[Weight])
-defstruct sssp(preds, weights)
+struct sssp:
+    let preds: VecC[OrC(nat?, bool?)]
+    let weights: VecC[num?]
 # Interpretation: `preds` gives the predecessor on the shortest path to
 # each node, and `weights` gives the weight of the path. For unreachable
 # nodes `preds` will be false, and for the start node it will be true.
 # For unreachable nodes, `weights` will be inf, which is DSSL2’s representation
 # of infinity.
 
-# A Weight is one of:
-#   - num?
-#   - inf
-
-# new_sssp_from : nat? nat? -> sssp?    
-# Creates a new SSSPResult for `size` vertices, initializing it for starting
+# Creates a new sssp for `len` vertices, initializing it for starting
 # the search at `start_node`
-def new_sssp_from(size: nat?, start_node: nat?) -> sssp?:
-    let result = sssp([ False; size ], [ inf; size ])
+def new_sssp(len: nat?, start_node: nat?) -> sssp?:
+    let result = sssp([ False; len ], [ inf; len ])
     result.preds[start_node] = True
     result.weights[start_node] = 0
     result
@@ -96,10 +117,9 @@ def new_sssp_from(size: nat?, start_node: nat?) -> sssp?:
 #
 # This update is called relaxation.
 
-# relax : SSSPResult nat? nat? Weight -> Void
 # Updates the distance to `v` given the best distance to `u` found so far
 # and the weight `weight` of the edge between `u` and `v`.
-def relax(result, u, weight, v):
+def relax(result: sssp?, u: nat?, weight: num?, v: nat?) -> VoidC:
     let old_weight = result.weights[v]
     let new_weight = weight + result.weights[u]
     if new_weight < old_weight:
@@ -110,15 +130,14 @@ def relax(result, u, weight, v):
 # all information propagates. How many times at most do we have to relax
 # the edges of a graph?
 
-# bellman_ford : WGraph? nat? -> SSSPResult
 # Computes SSSP from the given start node.
 # ASSUMPTION: The graph contains no negative cycles.
-def bellman_ford(a_graph, start_node):
-    let result = new_sssp_from(a_graph.nodes, start_node)
-    for i_ in a_graph.nodes:
-        for u in a_graph.nodes:
-            foreach_cons(lambda edge: relax(result, u, edge.weight, edge.dst),
-                         a_graph.edges(u))
+def bellman_ford(a_graph: WGRAPH!, start_node: nat?) -> sssp?:
+    let result = new_sssp(a_graph.len(), start_node)
+    for i_ in a_graph.len():
+        for u in a_graph.len():
+            Cons.foreach(λ edge: relax(result, u, edge.weight, edge.dst),
+                         a_graph.succs(u))
     result
 
 test 'bellman_ford tests':
@@ -137,25 +156,25 @@ test 'bellman_ford tests':
 # That way, every time we look at an edge, we know that the source of the edge
 # already has its shortest path found.)
 
-# dijkstra : WGraph? nat? -> SSSPResult
 # Computes SSSP from the given start node.
 # ASSUMPTION: The graph contains no negative edges.
-def dijkstra(a_graph: WGraph?, start_node: nat?) -> sssp?:
-    let visited = [ False; a_graph.nodes ]
-    let result = new_sssp_from(a_graph.nodes, start_node)
+def dijkstra(a_graph: WGRAPH!, start_node: nat?) -> sssp?:
+    let visited = [ False; a_graph.len() ]
+    let result = new_sssp(a_graph.len(), start_node)
 
     def find_nearest_unvisited():
         let best_so_far = False
-        for v in a_graph.nodes:
-            if !visited[v] and (!best_so_far or
-                    result.weights[v] < result.weights[best_so_far]):
-                best_so_far = v
+        for v in a_graph.len():
+            if not visited[v]:
+                if (not best_so_far or
+                      result.weights[v] < result.weights[best_so_far]):
+                    best_so_far = v
         best_so_far
 
     let u = find_nearest_unvisited()
     while u:
-        foreach_cons(lambda edge: relax(result, u, edge.weight, edge.dst),
-                     a_graph.edges(u))
+        Cons.foreach(λ edge: relax(result, u, edge.weight, edge.dst),
+                     a_graph.succs(u))
         visited[u] = True
         u = find_nearest_unvisited()
 

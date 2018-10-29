@@ -42,9 +42,9 @@
    [(= src dest) (make-re-result #true seen-so-far)]
    [(already-seen? src seen-so-far) (make-re-result #false seen-so-far)]
    [else (any-route-exists?/a graph
-			    ((graph-neighbors graph) src)
-			    dest
-			    (cons src seen-so-far))]))
+                            ((graph-neighbors graph) src)
+                            dest
+                            (cons src seen-so-far))]))
 
 ;; already-seen? : Natural [List-of Natural] -> Boolean
 (define (already-seen? n lon)
