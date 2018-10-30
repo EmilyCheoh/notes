@@ -56,32 +56,32 @@ class AdjMatWGraph (WGRAPH):
 # build_wdigraph : nat? VecC[Vector[nat?, num?, nat?]] -> AdjMatWGraph
 # Builds a directed graph with `nodes` nodes and the edges specified
 # by `edges`.
-def build_wdigraph(len: nat?, edges: VecC[VecC]) -> AdjMatWGraph?:
+def build_wdigraph(len: nat?, edges: VecC[WEdge?]) -> AdjMatWGraph?:
     let result = AdjMatWGraph(len)
     for edge in edges:
-        result.set_edge(edge[0], edge[1], edge[2])
+        result.set_edge(edge.src, edge.weight, edge.dst)
     result
 
 # Builds an undirected graph with `nodes` nodes and the edges specified
 # by `edges`.
-def build_wugraph(len: nat?, edges: VecC[VecC]) -> AdjMatWGraph?:
+def build_wugraph(len: nat?, edges: VecC[WEdge?]) -> AdjMatWGraph?:
     let result = AdjMatWGraph(len)
     for edge in edges:
-        result.set_edge(edge[0], edge[1], edge[2])
-        result.set_edge(edge[2], edge[1], edge[0])
+        result.set_edge(edge.src, edge.weight, edge.dst)
+        result.set_edge(edge.dst, edge.weight, edge.src)
     result
 
 # Graph from Wikipedia Dijkstra’s algo page
 let A_GRAPH = build_wugraph(7, [
-      [1,  7, 2],
-      [1,  9, 3],
-      [1, 14, 6],
-      [2, 10, 3],
-      [2, 15, 4],
-      [3, 11, 4],
-      [3,  2, 6],
-      [4,  6, 5],
-      [5,  9, 6],
+      WEdge(1,  7, 2),
+      WEdge(1,  9, 3),
+      WEdge(1, 14, 6),
+      WEdge(2, 10, 3),
+      WEdge(2, 15, 4),
+      WEdge(3, 11, 4),
+      WEdge(3,  2, 6),
+      WEdge(4,  6, 5),
+      WEdge(5,  9, 6),
 ])
 
 # SSSP has an interesting structure. Consider this: Suppose the last node
