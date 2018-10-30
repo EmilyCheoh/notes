@@ -1,37 +1,37 @@
 #include "functions.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
-TEST(Freezing)
+TEST_CASE("Freezing")
 {
-    CHECK_EQUAL(0, f2c(32));
+    CHECK(0 == f2c(32));
 }
 
-TEST(Boiling)
+TEST_CASE("Boiling")
 {
-    CHECK_EQUAL(100, f2c(212));
+    CHECK(100 == f2c(212));
 }
 
-TEST(Same)
+TEST_CASE("Same")
 {
-    CHECK_EQUAL(-40, f2c(-40));
+    CHECK(-40 == f2c(-40));
 }
 
-TEST(FreezingC2F)
+TEST_CASE("FreezingC2F")
 {
-    CHECK_EQUAL(32, c2f(0));
+    CHECK(32 == c2f(0));
 }
 
-TEST(BoilingC2F)
+TEST_CASE("BoilingC2F")
 {
-    CHECK_EQUAL(212, c2f(100));
+    CHECK(212 == c2f(100));
 }
 
-TEST(SameC2F)
+TEST_CASE("SameC2F")
 {
-    CHECK_EQUAL(-40, c2f(-40));
+    CHECK(-40 == c2f(-40));
 }
 
-TEST(FiveByTen)
+TEST_CASE("FiveByTen")
 {
-    CHECK_EQUAL(50, rectangle_area(5, 10));
+    CHECK(50 == rectangle_area(5, 10));
 }
