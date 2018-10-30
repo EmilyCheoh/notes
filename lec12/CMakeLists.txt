@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 project(lec12 CXX)
-include(.ipd/CMakeLists.txt)
+include(.ipd/cmake/CMakeLists.txt)
 
 add_program(hello src/hello.cpp)
 add_program(age src/age.cpp)
