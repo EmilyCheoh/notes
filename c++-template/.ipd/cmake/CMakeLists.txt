@@ -1,6 +1,8 @@
 # Turn on CTest
 enable_testing()
 
+include_directories(src)
+
 add_subdirectory(.ipd/lib/catch EXCLUDE_FROM_ALL)
 add_subdirectory(.ipd/lib/ge211 EXCLUDE_FROM_ALL)
 
