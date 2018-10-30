@@ -18,7 +18,7 @@ public:
     static const weight NO_EDGE;
 
     // Constructs a new graph with the given number of vertices.
-    WU_graph(size_t);
+    explicit WU_graph(size_t);
 
     // Adds an edge with the given weight.
     void add_edge(vertex, vertex, double);

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 project(lec13 CXX)
-include(.ipd/CMakeLists.txt)
+include(.ipd/cmake/CMakeLists.txt)
 
 add_test_program(acct_test
         test/acct_test.cpp src/Bank_account.cpp)

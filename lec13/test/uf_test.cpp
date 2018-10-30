@@ -1,4 +1,4 @@
 #include "Union_find.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 using namespace ipd;

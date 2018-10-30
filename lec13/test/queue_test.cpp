@@ -1,27 +1,27 @@
 #include "Queue.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
-TEST(Size0)
+TEST_CASE("Size0")
 {
     Queue queue;
 
-    CHECK_EQUAL(0, queue.size());
+    CHECK(0 == queue.size());
 }
 
-TEST(Enq)
+TEST_CASE("Enq")
 {
     Queue queue;
 
     queue.enqueue("a");
-    CHECK_EQUAL(1, queue.size());
+    CHECK(1 == queue.size());
     queue.enqueue("b");
-    CHECK_EQUAL(2, queue.size());
+    CHECK(2 == queue.size());
     queue.enqueue("c");
-    CHECK_EQUAL(3, queue.size());
+    CHECK(3 == queue.size());
 }
 
-TEST(EnqDeq)
+TEST_CASE("EnqDeq")
 {
     Queue queue;
 
@@ -29,21 +29,21 @@ TEST(EnqDeq)
     queue.enqueue("b");
     queue.enqueue("c");
 
-    CHECK_EQUAL("a", queue.dequeue());
-    CHECK_EQUAL(2, queue.size());
+    CHECK("a" == queue.dequeue());
+    CHECK(2 == queue.size());
 
     queue.enqueue("d");
-    CHECK_EQUAL(3, queue.size());
-    CHECK_EQUAL("b", queue.dequeue());
-    CHECK_EQUAL(2, queue.size());
-    CHECK_EQUAL("c", queue.dequeue());
-    CHECK_EQUAL("d", queue.dequeue());
-    CHECK_EQUAL(0, queue.size());
+    CHECK(3 == queue.size());
+    CHECK("b" == queue.dequeue());
+    CHECK(2 == queue.size());
+    CHECK("c" == queue.dequeue());
+    CHECK("d" == queue.dequeue());
+    CHECK(0 == queue.size());
 }
 
-TEST(DeqEmpty)
+TEST_CASE("DeqEmpty")
 {
     Queue queue;
 
-    CHECK_THROW(queue.dequeue(), std::logic_error);
+    CHECK_THROWS_AS(queue.dequeue(), std::logic_error);
 }

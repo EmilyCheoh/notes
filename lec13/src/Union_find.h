@@ -10,7 +10,7 @@ class Union_find
 {
 public:
     // Creates a new union-find of `n` objects.
-    Union_find(size_t n);
+    explicit Union_find(size_t n);
 
     // Returns the number of objects in the union-find.
     size_t size() const;

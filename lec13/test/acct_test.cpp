@@ -1,46 +1,46 @@
 #include "Bank_account.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
-TEST(NewAccount)
+TEST_CASE("NewAccount")
 {
     Bank_account acct(1, "Robby");
-    CHECK_EQUAL(1, acct.id());
-    CHECK_EQUAL("Robby", acct.owner());
-    CHECK_EQUAL(0, acct.balance());
+    CHECK(1 == acct.id());
+    CHECK("Robby" == acct.owner());
+    CHECK(0 == acct.balance());
 }
 
-TEST(Deposit)
+TEST_CASE("Deposit")
 {
     Bank_account acct(2, "Jesse");
     acct.deposit(50);
-    CHECK_EQUAL(50, acct.balance());
+    CHECK(50 == acct.balance());
     acct.deposit(25);
-    CHECK_EQUAL(75, acct.balance());
+    CHECK(75 == acct.balance());
 }
 
-TEST(Withdrawal_success)
+TEST_CASE("Withdrawal_success")
 {
     Bank_account acct(2, "Jesse");
     acct.deposit(50);
-    CHECK_EQUAL(50, acct.balance());
-    CHECK_EQUAL(true, acct.withdraw(20));
-    CHECK_EQUAL(30, acct.balance());
+    CHECK(50 == acct.balance());
+    CHECK(true == acct.withdraw(20));
+    CHECK(30 == acct.balance());
 }
 
-TEST(Withdrawal_failure)
+TEST_CASE("Withdrawal_failure")
 {
     Bank_account acct(2, "Jesse");
     acct.deposit(50);
-    CHECK_EQUAL(50, acct.balance());
-    CHECK_EQUAL(false, acct.withdraw(70));
-    CHECK_EQUAL(50, acct.balance());
+    CHECK(50 == acct.balance());
+    CHECK(false == acct.withdraw(70));
+    CHECK(50 == acct.balance());
 }
 
-TEST(Steal)
+TEST_CASE("Steal")
 {
     Bank_account acct(3, "Robby");
     acct.deposit(10000);
-    CHECK_EQUAL("Robby", acct.owner());
+    CHECK("Robby" == acct.owner());
     acct.change_owner("Jesse");
-    CHECK_EQUAL("Jesse", acct.owner());
+    CHECK("Jesse" == acct.owner());
 }
