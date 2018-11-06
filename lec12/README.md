@@ -130,7 +130,7 @@ Finally, we compute the answer and print it out:
 
 ## Functions
 
-As in BSL/ISL/DSSL, we will want to factor our programs into functions.
+As in BSL/ISL/DSSL2, we will want to factor our programs into functions.
 Here’s the definition of a simple C++ function:
 
 ```c++
