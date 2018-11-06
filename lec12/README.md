@@ -206,8 +206,8 @@ Then `my_posn` is a variable of type `posn`. We can get the member
 variables out using the dot operator:
 
 ```c++
-CHECK_EQUAL(3, my_posn.x);
-CHECK_EQUAL(4, my_posn.y);
+CHECK(3 == my_posn.x);
+CHECK(4 == my_posn.y);
 ```
 
 Let’s write a function that computes the distance between two posns.
