@@ -62,7 +62,7 @@ std::vector<WU_edge> get_all_edges(const WU_graph&);
 // Holds the result of computing SSSP.
 struct SSSP_result {
     // Initializes an SSSP result for a graph of the given size.
-    SSSP_result(size_t);
+    explicit SSSP_result(size_t);
 
     // Gives the predecessor along the shortest path to each vertex, or an
     // invalid value if that vertex is unreachable.
