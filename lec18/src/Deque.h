@@ -162,7 +162,7 @@ class Deque_iterator : public std::iterator<
 {
 public:
     // Compares two iterators.
-    bool operator==(Deque_iterator) noexcept;
+    bool operator==(Deque_iterator) const noexcept;
 
     // Gets the value of the current node.
     T& operator*() const noexcept;
@@ -213,7 +213,7 @@ public:
     Deque_const_iterator(Deque_iterator<T> other) noexcept
             : current_(other.current_), owner_(other.owner_) {}
 
-    bool operator==(Deque_const_iterator) noexcept;
+    bool operator==(Deque_const_iterator) const noexcept;
 
     const T& operator*() const noexcept;
     const T* operator->() const noexcept;
@@ -515,7 +515,7 @@ auto Deque<T>::crend() const noexcept -> const_reverse_iterator
 }
 
 template<typename T>
-bool Deque_iterator<T>::operator==(Deque_iterator other) noexcept
+bool Deque_iterator<T>::operator==(Deque_iterator other) const noexcept
 {
     return current_ == other.current_ && owner_ == other.owner_;
 }
@@ -573,7 +573,7 @@ bool operator!=(Deque_iterator<T> i, Deque_iterator<T> j) noexcept
 }
 
 template<typename T>
-bool Deque_const_iterator<T>::operator==(Deque_const_iterator other) noexcept
+bool Deque_const_iterator<T>::operator==(Deque_const_iterator other) const noexcept
 {
     return current_ == other.current_ && owner_ == other.owner_;
 }
