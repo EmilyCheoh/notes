@@ -1,15 +1,15 @@
 #include "posn.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
-TEST(DistanceInt)
+TEST_CASE("DistanceInt")
 {
     posn<int> p{2, 4}, q{6, 1};
-    CHECK_EQUAL(5, distance(p, q));
+    CHECK(distance(p, q) == 5);
 }
 
-TEST(DistanceDouble)
+TEST_CASE("DistanceDouble")
 {
     posn<double> p{2, 4}, q{6, 1};
-    CHECK_EQUAL(5, distance(p, q));
+    CHECK(distance(p, q) == 5);
 }

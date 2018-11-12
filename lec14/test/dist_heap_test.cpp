@@ -1,11 +1,11 @@
 #include "Distance_heap.h"
 #include "WU_graph.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 using namespace ipd;
 
-TEST(Insert5Remove5)
+TEST_CASE("Insert5Remove5")
 {
     Distance_heap h;
     h.insert({0, 4});
@@ -14,11 +14,11 @@ TEST(Insert5Remove5)
     h.insert({0, 8});
     h.insert({0, 2});
 
-    CHECK_EQUAL(0, h.remove_min().w);
-    CHECK_EQUAL(2, h.remove_min().w);
-    CHECK_EQUAL(4, h.remove_min().w);
-    CHECK_EQUAL(6, h.remove_min().w);
-    CHECK_EQUAL(8, h.remove_min().w);
+    CHECK(h.remove_min().w == 0);
+    CHECK(h.remove_min().w == 2);
+    CHECK(h.remove_min().w == 4);
+    CHECK(h.remove_min().w == 6);
+    CHECK(h.remove_min().w == 8);
 }
 
 bool relaxH(const WU_graph& graph, SSSP_result& sssp,
@@ -62,7 +62,7 @@ SSSP_result dijkstraH(const WU_graph& graph, WU_graph::vertex start)
     return result;
 }
 
-TEST(Dijkstra) {
+TEST_CASE("Dijkstra") {
     WU_graph g(7);
     g.add_edge(1, 2, 7);
     g.add_edge(1, 3, 9);
@@ -76,10 +76,10 @@ TEST(Dijkstra) {
 
     auto result = dijkstraH(g, 1);
 
-    CHECK_EQUAL(0, result.dist[1]);
-    CHECK_EQUAL(1, result.pred[1]);
-    CHECK_EQUAL(7, result.dist[2]);
-    CHECK_EQUAL(1, result.pred[2]);
-    CHECK_EQUAL(20, result.dist[5]);
-    CHECK_EQUAL(6, result.pred[5]);
+    CHECK(result.dist[1] == 0);
+    CHECK(result.pred[1] == 1);
+    CHECK(result.dist[2] == 7);
+    CHECK(result.pred[2] == 1);
+    CHECK(result.dist[5] == 20);
+    CHECK(result.pred[5] == 6);
 }

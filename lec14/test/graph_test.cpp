@@ -1,21 +1,21 @@
 #include "WU_graph.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 using namespace ipd;
 
-TEST(Graph0Size)
+TEST_CASE("Graph0Size")
 {
     WU_graph g(0);
-    CHECK_EQUAL(0, g.size());
+    CHECK(g.size() == 0);
 }
 
-TEST(Graph5Size)
+TEST_CASE("Graph5Size")
 {
     WU_graph g(5);
-    CHECK_EQUAL(5, g.size());
+    CHECK(g.size() == 5);
 }
 
-TEST(Graph5Ring)
+TEST_CASE("Graph5Ring")
 {
     WU_graph g(5);
     g.add_edge(0, 1, 4);
@@ -24,11 +24,11 @@ TEST(Graph5Ring)
     g.add_edge(3, 4, 4);
     g.add_edge(4, 0, -2);
 
-    CHECK_EQUAL(6, g.get_edge(3, 2));
-    CHECK_EQUAL(WU_graph::NO_EDGE, g.get_edge(2, 4));
+    CHECK(g.get_edge(3, 2) == 6);
+    CHECK(g.get_edge(2, 4) == WU_graph::NO_EDGE);
 }
 
-TEST(Dijkstra) {
+TEST_CASE("Dijkstra") {
     WU_graph g(7);
     g.add_edge(1, 2, 7);
     g.add_edge(1, 3, 9);
@@ -42,15 +42,15 @@ TEST(Dijkstra) {
 
     auto result = dijkstra(g, 1);
 
-    CHECK_EQUAL(0, result.dist[1]);
-    CHECK_EQUAL(1, result.pred[1]);
-    CHECK_EQUAL(7, result.dist[2]);
-    CHECK_EQUAL(1, result.pred[2]);
-    CHECK_EQUAL(20, result.dist[5]);
-    CHECK_EQUAL(6, result.pred[5]);
+    CHECK(result.dist[1] == 0);
+    CHECK(result.pred[1] == 1);
+    CHECK(result.dist[2] == 7);
+    CHECK(result.pred[2] == 1);
+    CHECK(result.dist[5] == 20);
+    CHECK(result.pred[5] == 6);
 }
 
-TEST(Bellman_Ford) {
+TEST_CASE("Bellman_Ford") {
     WU_graph g(7);
     g.add_edge(1, 2, 7);
     g.add_edge(1, 3, 9);
@@ -64,10 +64,10 @@ TEST(Bellman_Ford) {
 
     auto result = bellman_ford(g, 1);
 
-    CHECK_EQUAL(0, result.dist[1]);
-    CHECK_EQUAL(1, result.pred[1]);
-    CHECK_EQUAL(7, result.dist[2]);
-    CHECK_EQUAL(1, result.pred[2]);
-    CHECK_EQUAL(20, result.dist[5]);
-    CHECK_EQUAL(6, result.pred[5]);
+    CHECK(result.dist[1] == 0);
+    CHECK(result.pred[1] == 1);
+    CHECK(result.dist[2] == 7);
+    CHECK(result.pred[2] == 1);
+    CHECK(result.dist[5] == 20);
+    CHECK(result.pred[5] == 6);
 }

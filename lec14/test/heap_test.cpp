@@ -1,9 +1,9 @@
 #include "Heap.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 using namespace ipd;
 
-TEST(Insert5Remove5)
+TEST_CASE("Insert5Remove5")
 {
     Heap<int> h;
 
@@ -13,31 +13,31 @@ TEST(Insert5Remove5)
     h.insert(6);
     h.insert(4);
 
-    CHECK_EQUAL(5, h.size());
-    CHECK_EQUAL(0, h.remove_min());
-    CHECK_EQUAL(2, h.remove_min());
-    CHECK_EQUAL(4, h.remove_min());
-    CHECK_EQUAL(6, h.remove_min());
-    CHECK_EQUAL(8, h.remove_min());
+    CHECK(h.size() == 5);
+    CHECK(h.remove_min() == 0);
+    CHECK(h.remove_min() == 2);
+    CHECK(h.remove_min() == 4);
+    CHECK(h.remove_min() == 6);
+    CHECK(h.remove_min() == 8);
 }
 
-TEST(InsertRemove)
+TEST_CASE("InsertRemove")
 {
     Heap<int> h;
 
     h.insert(8);
     h.insert(7);
-    CHECK_EQUAL(7, h.peek_min());
-    CHECK_EQUAL(7, h.remove_min());
+    CHECK(h.peek_min() == 7);
+    CHECK(h.remove_min() == 7);
     h.insert(2);
     h.insert(14);
-    CHECK_EQUAL(2, h.remove_min());
+    CHECK(h.remove_min() == 2);
     h.insert(20);
     h.insert(1);
-    CHECK_EQUAL(1, h.remove_min());
-    CHECK_EQUAL(8, h.remove_min());
-    CHECK_EQUAL(14, h.remove_min());
-    CHECK_EQUAL(20, h.remove_min());
+    CHECK(h.remove_min() == 1);
+    CHECK(h.remove_min() == 8);
+    CHECK(h.remove_min() == 14);
+    CHECK(h.remove_min() == 20);
 }
 
 struct known_distance {
@@ -91,7 +91,7 @@ SSSP_result dijkstraG(const WU_graph& graph, WU_graph::vertex start)
     return result;
 }
 
-TEST(Dijkstra) {
+TEST_CASE("Dijkstra") {
     WU_graph g(7);
     g.add_edge(1, 2, 7);
     g.add_edge(1, 3, 9);
@@ -105,10 +105,10 @@ TEST(Dijkstra) {
 
     auto result = dijkstraG(g, 1);
 
-    CHECK_EQUAL(0, result.dist[1]);
-    CHECK_EQUAL(1, result.pred[1]);
-    CHECK_EQUAL(7, result.dist[2]);
-    CHECK_EQUAL(1, result.pred[2]);
-    CHECK_EQUAL(20, result.dist[5]);
-    CHECK_EQUAL(6, result.pred[5]);
+    CHECK(result.dist[1] == 0);
+    CHECK(result.pred[1] == 1);
+    CHECK(result.dist[2] == 7);
+    CHECK(result.pred[2] == 1);
+    CHECK(result.dist[5] == 20);
+    CHECK(result.pred[5] == 6);
 }
