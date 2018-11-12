@@ -1,62 +1,62 @@
 #include "../src-done/Various_hashes_done.h"
-#include "UnitTest++/UnitTest++.h"
+#include <catch.h>
 #include "../src-done/Vec_hash_done.h"
 
-TEST(HASH1)
+TEST_CASE("HASH1")
 {
     Vec_hash<int> vh;
     vh.add("abc", 1);
     const auto& vhc = vh;
-    CHECK_EQUAL(1, vhc.lookup("abc"));
+    CHECK(vhc.lookup("abc") == 1);
 }
 
 
-TEST(HASH2)
+TEST_CASE("HASH2")
 {
     Vec_hash<int> vh(10);
     vh.add("abc", 1);
     vh.lookup("abc") = 2;
-    CHECK_EQUAL(2, vh.lookup("abc"));
+    CHECK(vh.lookup("abc") == 2);
 }
 
 
-TEST(HASH3)
+TEST_CASE("HASH3")
 {
     Vec_hash<int> vh(1);
     vh.add("abc", 1);
     vh.add("def", 2);
-    CHECK_EQUAL(1, vh.lookup("abc"));
-    CHECK_EQUAL(2, vh.lookup("def"));
+    CHECK(vh.lookup("abc") == 1);
+    CHECK(vh.lookup("def") == 2);
 }
 
 
-TEST(HASH4)
+TEST_CASE("HASH4")
 {
     Vec_hash<int> vh(1);
     vh.add("abc", 1);
     vh.add("abc", 2);
-    CHECK_EQUAL(2, vh.lookup("abc"));
+    CHECK(vh.lookup("abc") == 2);
 }
 
-TEST(ID_HASH)
+TEST_CASE("ID_HASH")
 {
     Identity_hash<int> ih;
     std::string        s(8, 0);
     for (int           i = 0; i < 8; i++) s[i] = 255;
-    CHECK_EQUAL((size_t) -1, ih.hash(s));
+    CHECK(ih.hash(s) == (size_t) -1);
     for (int           i                       = 0; i < 8; i++) s[i] = i;
-    CHECK_EQUAL(506097522914230528, ih.hash(s));
+    CHECK(ih.hash(s) == 506097522914230528);
 }
 
-TEST(EIGHT_BYTES_HASH)
+TEST_CASE("EIGHT_BYTES_HASH")
 {
     Eight_bytes<int> eh;
-    CHECK_EQUAL(0, eh.hash(""));
-    CHECK_EQUAL(eh.hash(""), eh.hash("1"));
-    CHECK_EQUAL(eh.hash("abcdefgh"), eh.hash("abcdefghi"));
+    CHECK(eh.hash("") == 0);
+    CHECK(eh.hash("1") == eh.hash(""));
+    CHECK(eh.hash("abcdefghi") == eh.hash("abcdefgh"));
 }
 
-TEST(Member)
+TEST_CASE("Member")
 {
     Vec_hash<int> vh(100);
     CHECK(!vh.member("a1"));

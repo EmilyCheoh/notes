@@ -1,43 +1,43 @@
-#include "UnitTest++/UnitTest++.h"
+#include <catch.h>
 #include "../src-done/Open_hash_done.h"
 
-TEST(HASH1)
+TEST_CASE("HASH1")
 {
     Open_hash<int> vh;
     vh.add("abc", 1);
     const auto & vhc=vh;
-    CHECK_EQUAL(1, vhc.lookup("abc"));
+    CHECK(vhc.lookup("abc") == 1);
 }
 
 
-TEST(HASH2)
+TEST_CASE("HASH2")
 {
     Open_hash<int> vh(10);
     vh.add("abc", 1);
     vh.lookup("abc")=2;
-    CHECK_EQUAL(2, vh.lookup("abc"));
+    CHECK(vh.lookup("abc") == 2);
 }
 
 
-TEST(HASH3)
+TEST_CASE("HASH3")
 {
     Open_hash<int> vh(2);
     vh.add("abc", 1);
     vh.add("def", 2);
-    CHECK_EQUAL(1, vh.lookup("abc"));
-    CHECK_EQUAL(2, vh.lookup("def"));
+    CHECK(vh.lookup("abc") == 1);
+    CHECK(vh.lookup("def") == 2);
 }
 
 
-TEST(HASH4)
+TEST_CASE("HASH4")
 {
     Open_hash<int> vh(1);
     vh.add("abc", 1);
     vh.add("abc", 2);
-    CHECK_EQUAL(2, vh.lookup("abc"));
+    CHECK(vh.lookup("abc") == 2);
 }
 
-TEST(Member)
+TEST_CASE("Member")
 {
     Open_hash<int> vh(100);
     CHECK(!vh.member("a1"));
@@ -50,38 +50,38 @@ TEST(Member)
     CHECK(vh.member("a2"));
 }
 
-TEST(HASH5)
+TEST_CASE("HASH5")
 {
     Open_hash<int> vh(2);
     vh.add("abc", 1);
     vh.add("def", 2);
     vh.add("ghi", 3);
-    CHECK_EQUAL(1, vh.lookup("abc"));
-    CHECK_EQUAL(2, vh.lookup("def"));
-    CHECK_EQUAL(3, vh.lookup("ghi"));
+    CHECK(vh.lookup("abc") == 1);
+    CHECK(vh.lookup("def") == 2);
+    CHECK(vh.lookup("ghi") == 3);
 }
 
-TEST(GrowFromEmpty)
+TEST_CASE("GrowFromEmpty")
 {
     Open_hash<int> vh(0);
-    CHECK_EQUAL(0, vh.size());
-    CHECK_EQUAL(0, vh.table_size());
+    CHECK(vh.size() == 0);
+    CHECK(vh.table_size() == 0);
     vh.add("abc", 1);
-    CHECK_EQUAL(1, vh.size());
-    CHECK_EQUAL(1, vh.lookup("abc"));
+    CHECK(vh.size() == 1);
+    CHECK(vh.lookup("abc") == 1);
     CHECK(!vh.member("def"));
     vh.add("def", 2);
-    CHECK_EQUAL(2, vh.size());
-    CHECK_EQUAL(1, vh.lookup("abc"));
-    CHECK_EQUAL(2, vh.lookup("def"));
+    CHECK(vh.size() == 2);
+    CHECK(vh.lookup("abc") == 1);
+    CHECK(vh.lookup("def") == 2);
 }
 
-TEST(LookupThrows)
+TEST_CASE("LookupThrows")
 {
     Open_hash<int> vh;
 
-    CHECK_THROW(vh.lookup("abc"), Not_found);
+    CHECK_THROWS_AS(vh.lookup("abc"), Not_found);
     vh.add("abc", 1);
-    CHECK_EQUAL(1, vh.lookup("abc"));
-    CHECK_THROW(vh.lookup("def"), Not_found);
+    CHECK(vh.lookup("abc") == 1);
+    CHECK_THROWS_AS(vh.lookup("def"), Not_found);
 }
