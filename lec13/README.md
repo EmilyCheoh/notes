@@ -138,14 +138,14 @@ When we call `size` on `q1`, then within `size`, `front` and `back` refer to
 `q1.front` and `q1.back`, respectively:
 
 ```c++
-    CHECK_EQUAL(1, q1.size());
+    CHECK(1 == q1.size());
 ```
 
 And when we call `q2.size()`, the unqualified member names refer to members 
 of `q2`:
 
 ```c++
-    CHECK_EQUAL(2, q2.size());
+    CHECK(2 == q2.size());
 ```
 
 Notice the word `const` after the parameter parentheses on the first line? 
