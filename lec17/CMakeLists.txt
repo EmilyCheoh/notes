@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 project(lec17 CXX)
-include(.ipd/CMakeLists.txt)
+include(.ipd/cmake/CMakeLists.txt)
 
 add_test_program(bst_test
         test/bst_test.cpp

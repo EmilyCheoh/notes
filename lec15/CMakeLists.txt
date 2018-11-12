@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 project(lecture CXX)
-include(.ipd/CMakeLists.txt)
+include(.ipd/cmake/CMakeLists.txt)
 
 add_test_program(vec_hash_test test/Vec_hash_test.cpp src/Vec_hash.h)
 
