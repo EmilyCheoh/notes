@@ -15,7 +15,7 @@ public:
     using weight    = double;
 
     // NO_EDGE == +inf.0, representing the absence of an edge:
-    static const weight NO_EDGE;
+    static weight const NO_EDGE;
 
     // Constructs a new graph with the given number of vertices.
     explicit WU_graph(size_t);
@@ -38,11 +38,11 @@ private:
 
     void bounds_check_(vertex) const;
 
-    friend bool operator==(const WU_graph&, const WU_graph&);
+    friend bool operator==(WU_graph const&, WU_graph const&);
 };
 
 // Compares two graphs for equality by comparing all edges and weights.
-bool operator==(const WU_graph&, const WU_graph&);
+bool operator==(WU_graph const&, WU_graph const&);
 
 // A triple representing a single weighted edge. Used in return value of
 // `get_all_edges` (below).
@@ -57,7 +57,7 @@ struct WU_edge {
 };
 
 // Gets a vector of all edges in the graph.
-std::vector<WU_edge> get_all_edges(const WU_graph&);
+std::vector<WU_edge> get_all_edges(WU_graph const&);
 
 // Holds the result of computing SSSP.
 struct SSSP_result {
@@ -73,9 +73,9 @@ struct SSSP_result {
 };
 
 // Computes SSSP by Bellman-Ford algorithm.
-SSSP_result bellman_ford(const WU_graph&, WU_graph::vertex start);
+SSSP_result bellman_ford(WU_graph const&, WU_graph::vertex start);
 
 // Computes SSSP by Dijkstra's algorithm.
-SSSP_result dijkstra(const WU_graph&, WU_graph::vertex start);
+SSSP_result dijkstra(WU_graph const&, WU_graph::vertex start);
 
 }

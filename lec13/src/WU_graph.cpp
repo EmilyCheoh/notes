@@ -4,8 +4,8 @@
 
 namespace ipd {
 
-const WU_graph::weight WU_graph::NO_EDGE =
-                               std::numeric_limits<double>::infinity();
+WU_graph::weight const WU_graph::NO_EDGE =
+        std::numeric_limits<double>::infinity();
 
 WU_graph::WU_graph(size_t size)
 {
@@ -51,12 +51,12 @@ void WU_graph::bounds_check_(vertex v) const
     assert(v < size());
 }
 
-bool operator==(const WU_graph& g1, const WU_graph& g2)
+bool operator==(WU_graph const& g1, WU_graph const& g2)
 {
     return g1.weights_ == g2.weights_;
 }
 
-std::vector<WU_edge> get_all_edges(const WU_graph& graph)
+std::vector<WU_edge> get_all_edges(WU_graph const& graph)
 {
     std::vector<WU_edge> result;
 
@@ -78,7 +78,7 @@ SSSP_result::SSSP_result(size_t size)
 // Given the known distance to vertex v, and edge from v to u, relaxes
 // the distance to u by updating our knowledge to include the potential
 // path through v.
-void relax(const WU_graph& graph, SSSP_result& sssp,
+void relax(WU_graph const& graph, SSSP_result& sssp,
            WU_graph::vertex v, WU_graph::vertex u)
 {
     WU_graph::weight old_dist = sssp.dist[u];
@@ -90,7 +90,7 @@ void relax(const WU_graph& graph, SSSP_result& sssp,
     }
 }
 
-SSSP_result bellman_ford(const WU_graph& graph, WU_graph::vertex start)
+SSSP_result bellman_ford(WU_graph const& graph, WU_graph::vertex start)
 {
     size_t      size = graph.size();
     SSSP_result result(size);
@@ -119,8 +119,8 @@ SSSP_result bellman_ford(const WU_graph& graph, WU_graph::vertex start)
 
 // Helper for `dijkstra`: finds the index `i` of the smallest `sssp.dist[i]`
 // such that `visited[i]` is false.
-WU_graph::vertex find_nearest_unvisited(const SSSP_result& sssp,
-                                        const std::vector<bool>& visited)
+WU_graph::vertex find_nearest_unvisited(SSSP_result const& sssp,
+                                        std::vector<bool> const& visited)
 {
     size_t           size   = visited.size();
     WU_graph::vertex result = size;
@@ -133,7 +133,7 @@ WU_graph::vertex find_nearest_unvisited(const SSSP_result& sssp,
     return result;
 }
 
-SSSP_result dijkstra(const WU_graph& graph, WU_graph::vertex start)
+SSSP_result dijkstra(WU_graph const& graph, WU_graph::vertex start)
 {
     size_t            size = graph.size();
     SSSP_result       result(size);

@@ -20,7 +20,7 @@ struct Queue
 And we can implement the queue operations using the struct:
 
 ```c++
-void enqueue(Queue& q, const std::string& element)
+void enqueue(Queue& q, std::string const& element)
 {
     q.back.push_back(element);
 }
@@ -42,7 +42,7 @@ std::string dequeue(Queue& q)
     return result;
 }
 
-bool empty(const Queue& q) {
+bool empty(Queue const& q) {
     return q.front.empty() && q.back.empty();
 }
 ```
@@ -88,7 +88,7 @@ Here is the queue class declaration (from `src/Queue.h`):
 class Queue
 {
 public:
-    void enqueue(const std::string&);
+    void enqueue(std::string const&);
     std::string dequeue();
     size_t size() const;
 
@@ -258,7 +258,7 @@ time a `Bank_account` object is created. The declaration now looks like this:
 class Bank_account
 {
 public:
-    Bank_account(unsigned long id, const std::string& owner);
+    Bank_account(unsigned long id, std::string const& owner);
     void deposit(unsigned long amount);
     
 private:
@@ -278,7 +278,7 @@ of the constructor, in `src/Bank_account.cpp`, is responsible for doing the
 work of initializing the class. It looks like this:
 
 ```c++
-Bank_account::Bank_account(unsigned long id, const std::string& owner)
+Bank_account::Bank_account(unsigned long id, std::string const& owner)
     : id_{id}, owner_{owner}, balance_{0}
 { }
 ```
@@ -302,8 +302,8 @@ class, including a number of member functions. Let’s look at two particular
 member functions from the class:
 
 ```c++
-    const std::string& owner() const;
-    void change_owner(const std::string& new_owner);
+    std::string const& owner() const;
+    void change_owner(std::string const& new_owner);
 ```
 
 This is a pair of a *getter*, for getting at the value of a private member 
@@ -395,11 +395,11 @@ private representation of graphs in order to do the comparison. A friend
 declaration inside the `WU_graph` class gives it this permission:
 
 ```c++
-    friend bool operator==(const WU_graph&, const WU_graph&);
+    friend bool operator==(WU_graph const&, WU_graph const&);
 ```
 
 The other free (non-member) functions work without privileged access to the 
-graph class. See, for example, `get_all_edges(const WU_graph&)`, a function 
+graph class. See, for example, `get_all_edges(WU_graph const&)`, a function 
 that collects all the edges in a graph and returns them in a vector. Below 
 that are two graph algorithms we’ve seen before, Bellman-Ford and Dijkstra’s,
 both of which are for computing single-source shortest paths. These functions
