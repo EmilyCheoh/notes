@@ -1,6 +1,7 @@
 #include "WU_graph.h"
 
 #include <cassert>
+#include <stdexcept>
 
 namespace ipd {
 
@@ -78,7 +79,7 @@ SSSP_result::SSSP_result(size_t size)
 // Given the known distance to vertex v, and edge from v to u, relaxes
 // the distance to u by updating our knowledge to include the potential
 // path through v.
-void relax(WU_graph const& graph, SSSP_result& sssp,
+bool relax(WU_graph const& graph, SSSP_result& sssp,
            WU_graph::vertex v, WU_graph::vertex u)
 {
     WU_graph::weight old_dist = sssp.dist[u];
@@ -87,7 +88,19 @@ void relax(WU_graph const& graph, SSSP_result& sssp,
     if (new_dist < old_dist) {
         sssp.dist[u] = new_dist;
         sssp.pred[u] = v;
+        return true;
+    } else {
+        return false;
     }
+}
+
+// Relaxes an edge in both directions, returning whether either changed.
+bool relax2(WU_graph const& graph, SSSP_result& sssp,
+            WU_graph::vertex v, WU_graph::vertex u)
+{
+    bool b1 = relax(graph, sssp, v, u);
+    bool b2 = relax(graph, sssp, u, v);
+    return b1 || b2;
 }
 
 SSSP_result bellman_ford(WU_graph const& graph, WU_graph::vertex start)
@@ -98,20 +111,21 @@ SSSP_result bellman_ford(WU_graph const& graph, WU_graph::vertex start)
     result.pred[start] = start;
     result.dist[start] = 0;
 
-    for (size_t i = 0; i < size; ++i) {
-        for (auto edge : get_all_edges(graph)) {
+    std::vector<WU_edge> all_edges = get_all_edges(graph);
+
+    for (size_t i = 0; i < size - 1; ++i) {
+        for (auto edge : all_edges) {
             // BF is a directed graph algorithm, so to use it on an
             // undirected graph we need to consider each edge in both
             // directions.
-            relax(graph, result, edge.u, edge.v);
-            relax(graph, result, edge.v, edge.u);
+            relax2(graph, result, edge.u, edge.v);
         }
+    }
 
-        /*
-        for (WU_graph::vertex v = 0; v < size; ++v)
-            for (WU_graph::vertex u = 0; u < size; ++u)
-                relax(graph, result, v, u);
-        */
+    // One final pass to look for negative cycles.
+    for (auto edge : all_edges) {
+        if (relax2(graph, result, edge.u, edge.v))
+            throw std::logic_error("bellman_ford: negative cycle detected");
     }
 
     return result;
@@ -127,7 +141,8 @@ WU_graph::vertex find_nearest_unvisited(SSSP_result const& sssp,
 
     for (WU_graph::vertex u = 0; u < size; ++u) {
         if (visited[u]) continue;
-        if (result == size || sssp.dist[u] < sssp.dist[result]) result = u;
+        if (result == size || sssp.dist[u] < sssp.dist[result])
+            result = u;
     }
 
     return result;

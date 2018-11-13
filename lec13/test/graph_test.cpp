@@ -1,5 +1,6 @@
 #include "WU_graph.h"
 #include <catch.h>
+#include <stdexcept>
 
 using namespace ipd;
 
@@ -70,4 +71,13 @@ TEST_CASE("Bellman_Ford") {
     CHECK(1 == result.pred[2]);
     CHECK(20 == result.dist[5]);
     CHECK(6 == result.pred[5]);
+}
+
+TEST_CASE("Bellman_Ford error") {
+    WU_graph g(3);
+    g.add_edge(0, 1, 1);
+    g.add_edge(1, 2, 2);
+    g.add_edge(2, 0, -5);
+
+    CHECK_THROWS_AS(bellman_ford(g, 0), std::logic_error);
 }
