@@ -1,6 +1,6 @@
 #include "parser.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 #include <sstream>
 
 using namespace islpp;
@@ -13,72 +13,72 @@ std::string rt_expr(const std::string& str)
     return output.str();
 }
 
-#define CHECK_EXPR(expr) CHECK_EQUAL(expr, rt_expr(expr))
+#define CHECK_EXPR(expr) CHECK(rt_expr(expr) == expr)
 
-TEST(Integer_literal)
+TEST_CASE("Integer_literal")
 {
     CHECK_EXPR("5");
     CHECK_EXPR("-5");
-    CHECK_EQUAL("5", rt_expr("+5"));
+    CHECK(rt_expr("+5") == "5");
 }
 
-TEST(String_literal)
+TEST_CASE("String_literal")
 {
     CHECK_EXPR("\"hello\"");
 }
 
-TEST(Boolean_literal)
+TEST_CASE("Boolean_literal")
 {
     CHECK_EXPR("#true");
     CHECK_EXPR("#false");
 }
 
-TEST(Variable)
+TEST_CASE("Variable")
 {
     CHECK_EXPR("a");
 }
 
-TEST(Application)
+TEST_CASE("Application")
 {
     CHECK_EXPR("(f x)");
-    CHECK_EQUAL("(f x 5)", rt_expr("(f x   5)"));
+    CHECK(rt_expr("(f x   5)") == "(f x 5)");
 }
 
-TEST(Lambda)
+TEST_CASE("Lambda")
 {
     CHECK_EXPR("(lambda (x y) (+ x y))");
 }
 
-TEST(Local)
+TEST_CASE("Local")
 {
     CHECK_EXPR("(local [] 5)");
     CHECK_EXPR("(local [(define x 5)] x)");
 }
 
-TEST(Cond)
+TEST_CASE("Cond")
 {
     CHECK_EXPR("(cond [(zero? n) 1] [#true (* n (fact (- n 1)))])");
-    CHECK_EQUAL("(cond [#true a])", rt_expr("(cond [else a])"));
+    CHECK(rt_expr("(cond [else a])") == "(cond [#true a])");
 }
 
-TEST(Define_var)
+TEST_CASE("Define_var")
 {
     CHECK_EXPR("(local [(define a 5) (define b 8)] (+ a b))");
 }
 
-TEST(Define_fun)
+TEST_CASE("Define_fun")
 {
     CHECK_EXPR("(local [(define (f x) (+ 1 x))] (f 3))");
 }
 
-TEST(Define_struct)
+TEST_CASE("Define_struct")
 {
     CHECK_EXPR("(local [(define-struct posn [x y])] (make-posn 3 4))");
 }
 
-TEST(Things_that_do_not_parse)
+TEST_CASE("Things_that_do_not_parse")
 {
-    CHECK_THROW(rt_expr("(+ a 5"), syntax_error);
-    CHECK_THROW(rt_expr("(local (define a 5) (+ a 6))"),
+    CHECK_THROWS_AS(rt_expr("(+ a 5"), syntax_error);
+    CHECK_THROWS_AS(rt_expr("(local (define a 5) (+ a 6))"),
                 syntax_error);
 }

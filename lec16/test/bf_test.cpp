@@ -1,13 +1,13 @@
 #include "Bloom_filter.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
-TEST(Empty)
+TEST_CASE("Empty")
 {
     Bloom_filter filt(100, 3);
-    CHECK(!filt.check("Hello, world"));
+    CHECK_FALSE(filt.check("Hello, world"));
 }
 
-TEST(InsertCheck)
+TEST_CASE("InsertCheck")
 {
     Bloom_filter filt(100, 3);
 
@@ -16,5 +16,5 @@ TEST(InsertCheck)
 
     CHECK(filt.check("Hello, world"));
     CHECK(filt.check("Hello, world."));
-    CHECK(! filt.check("hello, world."));
+    CHECK_FALSE(filt.check("hello, world."));
 }

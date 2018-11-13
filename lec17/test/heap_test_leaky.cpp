@@ -1,51 +1,51 @@
 #include "Binomial_heap_leaky.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 #include <random>
 #include <iostream>
 using namespace ipd;
 
-TEST(New_is_empty)
+TEST_CASE("New_is_empty")
 {
     Binomial_heap<int> h;
     CHECK(h.empty());
-    CHECK_EQUAL(0, h.size());
+    CHECK(h.size() == 0);
 }
 
-TEST(Add_increases_size)
+TEST_CASE("Add_increases_size")
 {
     Binomial_heap<int> h;
 
     h.add(5);
-    CHECK(!h.empty());
-    CHECK_EQUAL(1, h.size());
+    CHECK_FALSE(h.empty());
+    CHECK(h.size() == 1);
 
     h.add(6);
-    CHECK(!h.empty());
-    CHECK_EQUAL(2, h.size());
+    CHECK_FALSE(h.empty());
+    CHECK(h.size() == 2);
 }
 
-TEST(Add_changes_min)
+TEST_CASE("Add_changes_min")
 {
     Binomial_heap<int> h;
 
     h.add(5);
-    CHECK_EQUAL(5, h.get_min());
+    CHECK(h.get_min() == 5);
 
     h.add(6);
-    CHECK_EQUAL(5, h.get_min());
+    CHECK(h.get_min() == 5);
 
     h.add(3);
-    CHECK_EQUAL(3, h.get_min());
+    CHECK(h.get_min() == 3);
 
     h.add(1);
-    CHECK_EQUAL(1, h.get_min());
+    CHECK(h.get_min() == 1);
 
     h.add(2);
-    CHECK_EQUAL(1, h.get_min());
+    CHECK(h.get_min() == 1);
 }
 
-TEST(Remove_changes_min)
+TEST_CASE("Remove_changes_min")
 {
     Binomial_heap<int> h;
 
@@ -56,22 +56,22 @@ TEST(Remove_changes_min)
     h.add(9);
     h.add(10);
 
-    CHECK_EQUAL(5, h.get_min());
+    CHECK(h.get_min() == 5);
     h.remove_min();
-    CHECK_EQUAL(6, h.get_min());
+    CHECK(h.get_min() == 6);
     h.remove_min();
-    CHECK_EQUAL(7, h.get_min());
+    CHECK(h.get_min() == 7);
     h.remove_min();
-    CHECK_EQUAL(8, h.get_min());
+    CHECK(h.get_min() == 8);
     h.remove_min();
-    CHECK_EQUAL(9, h.get_min());
+    CHECK(h.get_min() == 9);
     h.remove_min();
-    CHECK_EQUAL(10, h.get_min());
+    CHECK(h.get_min() == 10);
     h.remove_min();
     CHECK(h.empty());
 }
 
-TEST(Many_insertions)
+TEST_CASE("Many_insertions")
 {
     Binomial_heap<size_t> h;
 
@@ -80,12 +80,12 @@ TEST(Many_insertions)
     }
 
     for (size_t i = 1; i <= 1000; ++i) {
-        CHECK_EQUAL(i, h.get_min());
+        CHECK(h.get_min() == i);
         h.remove_min();
     }
 }
 
-TEST(Merge)
+TEST_CASE("Merge")
 {
     Binomial_heap<size_t> h1, h2;
 
@@ -99,15 +99,15 @@ TEST(Merge)
     h1.merge(h2);
 
     CHECK(h2.empty());
-    CHECK_EQUAL(1000, h1.size());
+    CHECK(h1.size() == 1000);
 
     for (size_t i = 0; i < 1000; ++i) {
-        CHECK_EQUAL(i, h1.get_min());
+        CHECK(h1.get_min() == i);
         h1.remove_min();
     }
 }
 
-TEST(Repeated)
+TEST_CASE("Repeated")
 {
     Binomial_heap<int> h;
 
@@ -115,19 +115,19 @@ TEST(Repeated)
     h.add(1);
     h.add(1);
 
-    CHECK_EQUAL(3, h.size());
+    CHECK(h.size() == 3);
 
-    CHECK_EQUAL(1, h.get_min());
+    CHECK(h.get_min() == 1);
     h.remove_min();
-    CHECK_EQUAL(1, h.get_min());
+    CHECK(h.get_min() == 1);
     h.remove_min();
-    CHECK_EQUAL(1, h.get_min());
+    CHECK(h.get_min() == 1);
     h.remove_min();
 
     CHECK(h.empty());
 }
 
-TEST(Random)
+TEST_CASE("Random")
 {
     std::mt19937_64 rng;
     rng.seed(std::random_device{}());

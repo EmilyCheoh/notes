@@ -1,6 +1,6 @@
 #include "ast.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 #include <sstream>
 
 using namespace islpp;
@@ -23,79 +23,78 @@ Expr vf() { return var(intern("f")); }
 Expr vx() { return var(intern("x")); }
 Expr vy() { return var(intern("y")); }
 
-TEST(Integer_literal)
+TEST_CASE("Integer_literal")
 {
-    CHECK_EQUAL("5", ast2string(int_lit(5)));
+    CHECK(ast2string(int_lit(5)) == "5");
 }
 
-TEST(Boolean_literal)
+TEST_CASE("Boolean_literal")
 {
-    CHECK_EQUAL("#true", ast2string(bool_lit(true)));
-    CHECK_EQUAL("#false", ast2string(bool_lit(false)));
+    CHECK(ast2string(bool_lit(true)) == "#true");
+    CHECK(ast2string(bool_lit(false)) == "#false");
 }
 
-TEST(String_literal)
+TEST_CASE("String_literal")
 {
-    CHECK_EQUAL("\"hello\"", ast2string(string_lit("hello")));
-    CHECK_EQUAL("\"hel\\\"lo\"", ast2string(string_lit("hel\"lo")));
+    CHECK(ast2string(string_lit("hello")) == "\"hello\"");
+    CHECK(ast2string(string_lit("hel\"lo")) == "\"hel\\\"lo\"");
 }
 
-TEST(Variable)
+TEST_CASE("Variable")
 {
-    CHECK_EQUAL("x", ast2string(vx()));
+    CHECK(ast2string(vx()) == "x");
 }
 
-TEST(Application)
+TEST_CASE("Application")
 {
-    CHECK_EQUAL("(f 5)", ast2string(app(vf(), {int_lit(5)})));
-    CHECK_EQUAL("(f 5 x)", ast2string(app(vf(), {int_lit(5), vx()})));
+    CHECK(ast2string(app(vf(), {int_lit(5)})) == "(f 5)");
+    CHECK(ast2string(app(vf(), {int_lit(5), vx()})) == "(f 5 x)");
 }
 
-TEST(Lambda)
+TEST_CASE("Lambda")
 {
-    CHECK_EQUAL("(lambda (x) (f x))",
-                ast2string(lambda({intern("x")}, app(vf(), {vx()}))));
-    CHECK_EQUAL("(lambda (x y) (f x))",
-                ast2string(lambda({intern("x"), intern("y")},
-                                  app(vf(), {vx()}))));
+    CHECK(ast2string(lambda({intern("x")}, app(vf(), {vx()}))) ==
+          "(lambda (x) (f x))");
+    CHECK(ast2string(lambda({intern("x"), intern("y")},
+                            app(vf(), {vx()}))) ==
+          "(lambda (x y) (f x))");
 }
 
-TEST(Local)
+TEST_CASE("Local")
 {
-    CHECK_EQUAL("(local [] 5)", ast2string(local({}, int_lit(5))));
-    CHECK_EQUAL("(local [(define x 5)] x)",
-                ast2string(local({define_var(intern("x"), int_lit(5))},
-                                 vx())));
-    CHECK_EQUAL("(local [(define x 5) (define y 6)] x)",
-                ast2string(local({define_var(intern("x"), int_lit(5)),
-                                  define_var(intern("y"), int_lit(6))},
-                                 vx())));
+    CHECK(ast2string(local({}, int_lit(5))) == "(local [] 5)");
+    CHECK(ast2string(local({define_var(intern("x"), int_lit(5))}, vx())) ==
+          "(local [(define x 5)] x)");
+    CHECK(ast2string(local({define_var(intern("x"), int_lit(5)),
+                            define_var(intern("y"), int_lit(6))},
+                           vx())) ==
+          "(local [(define x 5) (define y 6)] x)");
 }
 
-TEST(Cond)
+TEST_CASE("Cond")
 {
-    CHECK_EQUAL("(cond [x y] [#true 5])",
-                ast2string(cond({{vx(), vy()},
-                                 {bool_lit(true), int_lit(5)}})));
+    CHECK(ast2string(cond({{vx(), vy()},
+                           {bool_lit(true), int_lit(5)}})) ==
+          "(cond [x y] [#true 5])");
 }
 
-TEST(Define_var)
+TEST_CASE("Define_var")
 {
-    CHECK_EQUAL("(define x 7)",
-                ast2string(define_var(intern("x"), int_lit(7))));
+    CHECK(ast2string(define_var(intern("x"), int_lit(7))) ==
+          "(define x 7)");
 }
 
-TEST(Define_fun)
+TEST_CASE("Define_fun")
 {
-    CHECK_EQUAL("(define (f x) (f x))",
-                ast2string(define_fun(intern("f"),
-                                      {intern("x")},
-                                      app(vf(), {vx()}))));
+    CHECK(ast2string(define_fun(intern("f"),
+                                {intern("x")},
+                                app(vf(), {vx()}))) ==
+          "(define (f x) (f x))");
 }
 
-TEST(Define_struct)
+TEST_CASE("Define_struct")
 {
-    CHECK_EQUAL("(define-struct posn [x y])",
-                ast2string(define_struct(intern("posn"),
-                                         {intern("x"), intern("y")})));
+    CHECK(ast2string(define_struct(intern("posn"),
+                                   {intern("x"), intern("y")})) ==
+          "(define-struct posn [x y])");
 }

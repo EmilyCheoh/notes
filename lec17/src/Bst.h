@@ -7,8 +7,8 @@
 #include <iostream>
 #include <cassert>
 
-// declare one of the test classes so it can be our friend
-class TestInsertFinds;
+// declare a class for the tester to access private stuff
+class Tester;
 
 namespace ipd {
 
@@ -55,7 +55,7 @@ private:
 
     bool bounded(node_* node, T lo, bool lo_inf, T hi, bool hi_inf);
 
-    friend TestInsertFinds;
+    friend Tester;
 };
 
 

@@ -1,9 +1,9 @@
 #include "symbol.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 using namespace islpp;
 
-TEST(Intern)
+TEST_CASE("Intern")
 {
     auto& tab = Intern_table::INSTANCE();
     Symbol a1 = tab.intern("a"),
@@ -11,14 +11,14 @@ TEST(Intern)
            b1 = tab.intern("b"),
            b2 = tab.intern("b");
 
-    CHECK_EQUAL(a1, a1);
-    CHECK_EQUAL(a1, a2);
-    CHECK_EQUAL(b1, b2);
+    CHECK(a1 == a1);
+    CHECK(a2 == a1);
+    CHECK(b2 == b1);
 
     CHECK(a1 != b1);
 }
 
-TEST(Uninterned)
+TEST_CASE("Uninterned")
 {
     auto& tab = Intern_table::INSTANCE();
     Symbol a1 = tab.intern("a"),

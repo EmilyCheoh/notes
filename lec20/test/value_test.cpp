@@ -1,33 +1,33 @@
 #include "value.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 #include <sstream>
 
 using namespace islpp;
 
-TEST(Boolean)
+TEST_CASE("Boolean")
 {
     value_ptr t = get_boolean(true);
     value_ptr f = get_boolean(false);
 
-    CHECK_EQUAL(true, t->as_bool());
-    CHECK_EQUAL(false, f->as_bool());
-    CHECK_THROW(t->as_int(), type_error);
+    CHECK(t->as_bool() == true);
+    CHECK(f->as_bool() == false);
+    CHECK_THROWS_AS(t->as_int(), type_error);
 
     std::ostringstream os;
     os << t << ' ' << f;
-    CHECK_EQUAL("#true #false", os.str());
+    CHECK(os.str() == "#true #false");
 }
 
-TEST(Integer)
+TEST_CASE("Integer")
 {
     value_ptr i = mk_integer(5);
 
-    CHECK_EQUAL(5, i->as_int());
-    CHECK_THROW(i->as_bool(), type_error);
+    CHECK(i->as_int() == 5);
+    CHECK_THROWS_AS(i->as_bool(), type_error);
 
     std::ostringstream os;
     os << i;
-    CHECK_EQUAL("5", os.str());
+    CHECK(os.str() == "5");
 }
 

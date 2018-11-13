@@ -1,17 +1,17 @@
 #include "env.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 using namespace islpp;
 
-TEST(LookupEmpty)
+TEST_CASE("LookupEmpty")
 {
     env_ptr<int> empty;
     Symbol a = intern("a");
 
-    CHECK_THROW(empty.lookup(a), binding_not_found);
+    CHECK_THROWS_AS(empty.lookup(a), binding_not_found);
 }
 
-TEST(LookupBound)
+TEST_CASE("LookupBound")
 {
     Symbol a = intern("a"),
            b = intern("b"),
@@ -19,26 +19,26 @@ TEST(LookupBound)
            d = intern("d");
     env_ptr<int> env = env_ptr<int>{}.extend(a, 2).extend(b, 3).extend(c, 4);
 
-    CHECK_EQUAL(2, env.lookup(a));
-    CHECK_EQUAL(3, env.lookup(b));
-    CHECK_EQUAL(4, env.lookup(c));
-    CHECK_THROW(env.lookup(d), binding_not_found);
+    CHECK(env.lookup(a) == 2);
+    CHECK(env.lookup(b) == 3);
+    CHECK(env.lookup(c) == 4);
+    CHECK_THROWS_AS(env.lookup(d), binding_not_found);
 }
 
-TEST(LookupShadow)
+TEST_CASE("LookupShadow")
 {
     Symbol a = intern("a"),
            b = intern("b");
     env_ptr<int> env1 = env_ptr<int>{}.extend(a, 2).extend(b, 3);
     env_ptr<int> env2 = env1.extend(a, 5);
 
-    CHECK_EQUAL(2, env1.lookup(a));
-    CHECK_EQUAL(3, env1.lookup(b));
-    CHECK_EQUAL(5, env2.lookup(a));
-    CHECK_EQUAL(3, env2.lookup(b));
+    CHECK(env1.lookup(a) == 2);
+    CHECK(env1.lookup(b) == 3);
+    CHECK(env2.lookup(a) == 5);
+    CHECK(env2.lookup(b) == 3);
 }
 
-TEST(Update)
+TEST_CASE("Update")
 {
     Symbol a = intern("a"),
            b = intern("b");
@@ -46,8 +46,8 @@ TEST(Update)
     env_ptr<int> env2 = env1.extend(a, 5);
 
     env2.update(a, 6);
-    CHECK_EQUAL(2, env1.lookup(a));
-    CHECK_EQUAL(3, env1.lookup(b));
-    CHECK_EQUAL(6, env2.lookup(a));
-    CHECK_EQUAL(3, env2.lookup(b));
+    CHECK(env1.lookup(a) == 2);
+    CHECK(env1.lookup(b) == 3);
+    CHECK(env2.lookup(a) == 6);
+    CHECK(env2.lookup(b) == 3);
 }

@@ -1,60 +1,60 @@
 #include "RP_queue.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 #include <stdexcept>
 
-TEST(Empty) {
+TEST_CASE("Empty") {
     Queue<int> q;
     CHECK(q.empty());
 }
 
-TEST(NotEmpty) {
+TEST_CASE("NotEmpty") {
     Queue<int> q;
     q.enqueue(1);
-    CHECK(! q.empty());
+    CHECK_FALSE(q.empty());
 }
 
-TEST(EnqueueEnqueue) {
+TEST_CASE("EnqueueEnqueue") {
     Queue<int> q;
     q.enqueue(1);
     q.enqueue(2);
 }
 
-TEST(EnqueueDequeue) {
+TEST_CASE("EnqueueDequeue") {
     Queue<int> q;
     q.enqueue(1);
-    CHECK_EQUAL(1, q.dequeue());
+    CHECK(q.dequeue() == 1);
 }
 
-TEST(EnqueueEnqueueDequeueDequeue) {
+TEST_CASE("EnqueueEnqueueDequeueDequeue") {
     Queue<int> q;
     q.enqueue(1);
     q.enqueue(2);
     q.enqueue(3);
     q.enqueue(4);
-    CHECK_EQUAL(1, q.dequeue());
-    CHECK_EQUAL(2, q.dequeue());
-    CHECK_EQUAL(3, q.dequeue());
-    CHECK_EQUAL(4, q.dequeue());
-    CHECK_THROW(q.dequeue(), std::logic_error);
+    CHECK(q.dequeue() == 1);
+    CHECK(q.dequeue() == 2);
+    CHECK(q.dequeue() == 3);
+    CHECK(q.dequeue() == 4);
+    CHECK_THROWS_AS(q.dequeue(), std::logic_error);
 }
 
-TEST(EnqueueDequeueMore) {
+TEST_CASE("EnqueueDequeueMore") {
     Queue<int> q;
     q.enqueue(1);
     q.enqueue(2);
-    CHECK_EQUAL(1, q.dequeue());
+    CHECK(q.dequeue() == 1);
     q.enqueue(3);
     q.enqueue(4);
-    CHECK_EQUAL(2, q.dequeue());
-    CHECK_EQUAL(3, q.dequeue());
-    CHECK_EQUAL(4, q.dequeue());
-    CHECK_THROW(q.dequeue(), std::logic_error);
+    CHECK(q.dequeue() == 2);
+    CHECK(q.dequeue() == 3);
+    CHECK(q.dequeue() == 4);
+    CHECK_THROWS_AS(q.dequeue(), std::logic_error);
     q.enqueue(5);
-    CHECK_EQUAL(5, q.dequeue());
+    CHECK(q.dequeue() == 5);
     q.enqueue(6);
     q.enqueue(7);
-    CHECK_EQUAL(6, q.dequeue());
-    CHECK_EQUAL(7, q.dequeue());
-    CHECK_THROW(q.dequeue(), std::logic_error);
+    CHECK(q.dequeue() == 6);
+    CHECK(q.dequeue() == 7);
+    CHECK_THROWS_AS(q.dequeue(), std::logic_error);
 }

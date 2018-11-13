@@ -1,5 +1,5 @@
 #include "reader.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 #include <sstream>
 
@@ -12,12 +12,12 @@ value_ptr read_string(const std::string& str)
     return read(lex);
 }
 
-TEST(Integer)
+TEST_CASE("Integer")
 {
     CHECK(mk_integer(5)->equal(read_string("5")));
 }
 
-TEST(Define)
+TEST_CASE("Define")
 {
     CHECK(mk_cons(mk_symbol(intern("define")),
                   mk_cons(mk_symbol(intern("a")),
@@ -31,6 +31,6 @@ TEST(Define)
                                   get_empty())))->equal(
             read_string("[define a 6]")));
 
-    CHECK_THROW(read_string("(define a 6]"), syntax_error);
-    CHECK_THROW(read_string("(define a 6"), syntax_error);
+    CHECK_THROWS_AS(read_string("(define a 6]"), syntax_error);
+    CHECK_THROWS_AS(read_string("(define a 6"), syntax_error);
 }

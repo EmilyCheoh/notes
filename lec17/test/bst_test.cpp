@@ -1,50 +1,60 @@
 #include "Bst.h"
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 #include <random>
 
 using namespace ipd;
 
-TEST(InsertFinds) {
+class Tester
+{
+public:
+    template <typename T>
+    static typename ipd::Bst<T>::node_* get_root(ipd::Bst<T>& bst)
+    {
+        return bst.root_.get();
+    }
+};
+
+TEST_CASE("InsertFinds") {
     Bst<size_t> t1, t2;
 
-    CHECK_EQUAL((ipd::Bst<size_t>::node_*)NULL,&(*t1.root_));
-    
+    CHECK(Tester::get_root(t1) == nullptr);
+
     t1.insert(1);
     t1.insert(2);
     t1.insert(3);
-    CHECK_EQUAL(1,t1.root_->data);
-    CHECK_EQUAL(2,t1.root_->right->data);
-    CHECK_EQUAL(3,t1.root_->right->right->data);
+    CHECK(Tester::get_root(t1)->data == 1);
+    CHECK(Tester::get_root(t1)->right->data == 2);
+    CHECK(Tester::get_root(t1)->right->right->data == 3);
 
     t2.insert(3);
     t2.insert(2);
     t2.insert(1);
-    CHECK_EQUAL(3,t2.root_->data);
-    CHECK_EQUAL(2,t2.root_->left->data);
-    CHECK_EQUAL(1,t2.root_->left->left->data);
+    CHECK(Tester::get_root(t2)->data == 3);
+    CHECK(Tester::get_root(t2)->left->data == 2);
+    CHECK(Tester::get_root(t2)->left->left->data == 1);
 
 }
 
-TEST(New_is_empty_and_size_0)
+TEST_CASE("New_is_empty_and_size_0")
 {
     Bst<std::string> t;
     CHECK(t.empty());
-    CHECK_EQUAL(0, t.size());
+    CHECK(t.size() == 0);
 }
 
-TEST(Insert_increases_size)
+TEST_CASE("Insert_increases_size")
 {
     Bst<std::string> t;
 
     t.insert("hello");
-    CHECK(!t.empty());
-    CHECK_EQUAL(1, t.size());
+    CHECK_FALSE(t.empty());
+    CHECK(t.size() == 1);
 
     t.insert("world");
-    CHECK_EQUAL(2, t.size());
+    CHECK(t.size() == 2);
 }
 
-TEST(Contains_after_insert)
+TEST_CASE("Contains_after_insert")
 {
     Bst<std::string> t;
 
@@ -53,41 +63,41 @@ TEST(Contains_after_insert)
 
     CHECK(t.contains("hello"));
     CHECK(t.contains("world"));
-    CHECK(!t.contains("other"));
+    CHECK_FALSE(t.contains("other"));
 }
 
-TEST(More_inserts)
+TEST_CASE("More_inserts")
 {
     Bst<int> t{4, 2, 6, 1, 3, 5, 7};
 
-    CHECK(!t.contains(0));
-    CHECK(!t.contains(8));
+    CHECK_FALSE(t.contains(0));
+    CHECK_FALSE(t.contains(8));
     for (int i = 1; i <= 7; ++i)
         CHECK(t.contains(i));
 }
 
-TEST(Insert_then_delete)
+TEST_CASE("Insert_then_delete")
 {
     Bst<int> t{4, 2, 6, 1, 3, 5, 7};
 
-    CHECK_EQUAL(7, t.size());
+    CHECK(t.size() == 7);
     t.remove(4);
-    CHECK_EQUAL(6, t.size());
+    CHECK(t.size() == 6);
     t.remove(4);
-    CHECK_EQUAL(6, t.size());
+    CHECK(t.size() == 6);
 
-    CHECK(!t.contains(0));
+    CHECK_FALSE(t.contains(0));
     CHECK(t.contains(1));
     CHECK(t.contains(2));
     CHECK(t.contains(3));
-    CHECK(!t.contains(4));
+    CHECK_FALSE(t.contains(4));
     CHECK(t.contains(5));
     CHECK(t.contains(6));
     CHECK(t.contains(7));
-    CHECK(!t.contains(8));
+    CHECK_FALSE(t.contains(8));
 }
 
-TEST(Insert_then_delete_all)
+TEST_CASE("Insert_then_delete_all")
 {
     Bst<int> t{4, 2, 6, 1, 3, 5, 7};
     for (int i = 1; i <= 7; ++i)
@@ -95,16 +105,16 @@ TEST(Insert_then_delete_all)
     CHECK(t.empty());
 }
 
-TEST(Invariant)
+TEST_CASE("Invariant")
 {
     Bst<size_t> b;
-    CHECK_EQUAL(true,b.bst_invariant_holds());
+    CHECK(b.bst_invariant_holds() == true);
     b.insert(0);
-    CHECK_EQUAL(true,b.bst_invariant_holds());
+    CHECK(b.bst_invariant_holds() == true);
     b.insert(2);
-    CHECK_EQUAL(true,b.bst_invariant_holds());
+    CHECK(b.bst_invariant_holds() == true);
     b.insert(1);
-    CHECK_EQUAL(true,b.bst_invariant_holds());
+    CHECK(b.bst_invariant_holds() == true);
 }
 
 void random_test_remove_something(std::uniform_int_distribution<size_t>& dist,
@@ -116,11 +126,11 @@ void random_test_remove_something(std::uniform_int_distribution<size_t>& dist,
     size_t index = dist(rng) % to_remove.size();
     b.remove(to_remove[index]);
     CHECK(b.bst_invariant_holds());
-    CHECK_EQUAL(number_before-1,b.size());
+    CHECK(b.size() == number_before-1);
     to_remove.erase(to_remove.begin() + index);
 }
 
-TEST(Random)
+TEST_CASE("Random")
 {
     std::mt19937_64 rng;
     rng.seed(std::random_device{}());
@@ -142,7 +152,7 @@ TEST(Random)
             for (size_t ele : to_remove) {
                 if (ele == to_insert) already_inserted = true;
             }
-            CHECK_EQUAL(size_before+(already_inserted?0:1),b.size());
+            CHECK(b.size() == size_before+(already_inserted?0:1));
 
             if (!already_inserted) {
                 to_remove.push_back(to_insert);

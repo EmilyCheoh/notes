@@ -1,6 +1,6 @@
 #include "lexer.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 
 #include <sstream>
 #include <vector>
@@ -22,132 +22,132 @@ std::vector<Token> lex_string(const std::string& str)
     return result;
 }
 
-TEST(Nothing)
+TEST_CASE("Nothing")
 {
     auto result = lex_string("");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(token_type::eof, result[0].type);
+    CHECK(result.size() == 1);
+    CHECK(result[0].type == token_type::eof);
 
     result = lex_string("   ");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(token_type::eof, result[0].type);
+    CHECK(result.size() == 1);
+    CHECK(result[0].type == token_type::eof);
 
     result = lex_string(";   ");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(token_type::eof, result[0].type);
+    CHECK(result.size() == 1);
+    CHECK(result[0].type == token_type::eof);
 
     result = lex_string(";   \n  ");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(token_type::eof, result[0].type);
+    CHECK(result.size() == 1);
+    CHECK(result[0].type == token_type::eof);
 }
 
-TEST(LParen)
+TEST_CASE("LParen")
 {
     auto result = lex_string("  (  ");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::lparen, "("), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::lparen, "("));
+    CHECK(result[1] == Token(token_type::eof, ""));
 }
 
-TEST(RParen)
+TEST_CASE("RParen")
 {
     auto result = lex_string("  )  ");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::rparen, ")"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::rparen, ")"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 }
 
-TEST(OtherDelims)
+TEST_CASE("OtherDelims")
 {
     auto result = lex_string("[{}]");
-    CHECK_EQUAL(5, result.size());
-    CHECK_EQUAL(Token(token_type::lbrack, "["), result[0]);
-    CHECK_EQUAL(Token(token_type::lbrace, "{"), result[1]);
-    CHECK_EQUAL(Token(token_type::rbrace, "}"), result[2]);
-    CHECK_EQUAL(Token(token_type::rbrack, "]"), result[3]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[4]);
+    CHECK(result.size() == 5);
+    CHECK(result[0] == Token(token_type::lbrack, "["));
+    CHECK(result[1] == Token(token_type::lbrace, "{"));
+    CHECK(result[2] == Token(token_type::rbrace, "}"));
+    CHECK(result[3] == Token(token_type::rbrack, "]"));
+    CHECK(result[4] == Token(token_type::eof, ""));
 }
 
-TEST(Boolean)
+TEST_CASE("Boolean")
 {
     auto result = lex_string("#true");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::boolean, "#true"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::boolean, "#true"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 
     result = lex_string("#false");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::boolean, "#false"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::boolean, "#false"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 }
 
-TEST(String)
+TEST_CASE("String")
 {
     auto result = lex_string("\"hello\"");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::string, "hello"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::string, "hello"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 
     result = lex_string("\"hel\\nlo\" \"wor\\\"ld\"");
-    CHECK_EQUAL(3, result.size());
-    CHECK_EQUAL(Token(token_type::string, "hel\nlo"), result[0]);
-    CHECK_EQUAL(Token(token_type::string, "wor\"ld"), result[1]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[2]);
+    CHECK(result.size() == 3);
+    CHECK(result[0] == Token(token_type::string, "hel\nlo"));
+    CHECK(result[1] == Token(token_type::string, "wor\"ld"));
+    CHECK(result[2] == Token(token_type::eof, ""));
 }
 
-TEST(Integer)
+TEST_CASE("Integer")
 {
     auto result = lex_string("55");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::integer, "55"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::integer, "55"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 
     result = lex_string("-55");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::integer, "-55"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::integer, "-55"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 
     result = lex_string("-55  ");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::integer, "-55"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::integer, "-55"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 }
 
-TEST(Symbol)
+TEST_CASE("Symbol")
 {
     auto result = lex_string("--55");
-    CHECK_EQUAL(2, result.size());
-    CHECK_EQUAL(Token(token_type::symbol, "--55"), result[0]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[1]);
+    CHECK(result.size() == 2);
+    CHECK(result[0] == Token(token_type::symbol, "--55"));
+    CHECK(result[1] == Token(token_type::eof, ""));
 }
 
-TEST(Sequence)
+TEST_CASE("Sequence")
 {
     auto result = lex_string("(define x ; ignore \n (+ a 3))");
-    CHECK_EQUAL(10, result.size());
-    CHECK_EQUAL(Token(token_type::lparen, "("), result[0]);
-    CHECK_EQUAL(Token(token_type::symbol, "define"), result[1]);
-    CHECK_EQUAL(Token(token_type::symbol, "x"), result[2]);
-    CHECK_EQUAL(Token(token_type::lparen, "("), result[3]);
-    CHECK_EQUAL(Token(token_type::symbol, "+"), result[4]);
-    CHECK_EQUAL(Token(token_type::symbol, "a"), result[5]);
-    CHECK_EQUAL(Token(token_type::integer, "3"), result[6]);
-    CHECK_EQUAL(Token(token_type::rparen, ")"), result[7]);
-    CHECK_EQUAL(Token(token_type::rparen, ")"), result[8]);
-    CHECK_EQUAL(Token(token_type::eof, ""), result[9]);
+    CHECK(result.size() == 10);
+    CHECK(result[0] == Token(token_type::lparen, "("));
+    CHECK(result[1] == Token(token_type::symbol, "define"));
+    CHECK(result[2] == Token(token_type::symbol, "x"));
+    CHECK(result[3] == Token(token_type::lparen, "("));
+    CHECK(result[4] == Token(token_type::symbol, "+"));
+    CHECK(result[5] == Token(token_type::symbol, "a"));
+    CHECK(result[6] == Token(token_type::integer, "3"));
+    CHECK(result[7] == Token(token_type::rparen, ")"));
+    CHECK(result[8] == Token(token_type::rparen, ")"));
+    CHECK(result[9] == Token(token_type::eof, ""));
 }
 
-TEST(Error)
+TEST_CASE("Error")
 {
     auto result = lex_string("\"abc");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(Token(token_type::error, "\"abc"), result[0]);
+    CHECK(result.size() == 1);
+    CHECK(result[0] == Token(token_type::error, "\"abc"));
 
     result = lex_string("\"abc\\");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(Token(token_type::error, "\"abc\\"), result[0]);
+    CHECK(result.size() == 1);
+    CHECK(result[0] == Token(token_type::error, "\"abc\\"));
 
     result = lex_string("#");
-    CHECK_EQUAL(1, result.size());
-    CHECK_EQUAL(Token(token_type::error, "#"), result[0]);
+    CHECK(result.size() == 1);
+    CHECK(result[0] == Token(token_type::error, "#"));
 }

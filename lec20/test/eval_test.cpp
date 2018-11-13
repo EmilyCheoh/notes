@@ -2,7 +2,7 @@
 #include "primops.h"
 #include "parser.h"
 
-#include <UnitTest++/UnitTest++.h>
+#include <catch.h>
 #include <sstream>
 
 using namespace islpp;
@@ -13,12 +13,12 @@ value_ptr ev_string(const std::string& str)
     return parse_expr(input)->eval(primop::environment);
 }
 
-TEST(True)
+TEST_CASE("True")
 {
-    CHECK_EQUAL(get_boolean(true), ev_string("#true"));
+    CHECK(ev_string("#true") == get_boolean(true));
 }
 
-TEST(Lambda)
+TEST_CASE("Lambda")
 {
     Symbol      a = intern("a"), b = intern("b");
     Environment env;
@@ -29,11 +29,11 @@ TEST(Lambda)
     Expr f = lambda({a, b}, var(a));
     Expr g = lambda({a, b}, var(b));
 
-    CHECK_EQUAL(5, app(f, {l5, l6})->eval(env)->as_int());
-    CHECK_EQUAL(6, app(g, {l5, l6})->eval(env)->as_int());
+    CHECK(app(f, {l5, l6})->eval(env)->as_int() == 5);
+    CHECK(app(g, {l5, l6})->eval(env)->as_int() == 6);
 }
 
-TEST(Factorial)
+TEST_CASE("Factorial")
 {
     Symbol n    = intern("n"),
            fact = intern("fact");
@@ -51,10 +51,10 @@ TEST(Factorial)
     Expr e = local({define_fun(fact, {n}, body)},
                    app(var(fact), {int_lit(5)}));
 
-    CHECK_EQUAL(120, e->eval(primop::environment)->as_int());
+    CHECK(e->eval(primop::environment)->as_int() == 120);
 }
 
-TEST(Posn)
+TEST_CASE("Posn")
 {
     Symbol posn = intern("posn");
 
@@ -63,60 +63,63 @@ TEST(Posn)
                             app(var(intern("make-posn")),
                                 {int_lit(3), int_lit(4)}));
 
-    CHECK_EQUAL(get_boolean(true),
-                local({decl1, decl2},
-                      app(var(intern("posn?")), {var(intern("p"))}))
-                        ->eval(primop::environment));
-    CHECK_EQUAL(get_boolean(false),
-                local({decl1, decl2},
-                      app(var(intern("cons?")), {var(intern("p"))}))
-                        ->eval(primop::environment));
-    CHECK_EQUAL(3,
-                local({decl1, decl2},
-                      app(var(intern("posn-x")), {var(intern("p"))}))
-                        ->eval(primop::environment)->as_int());
-    CHECK_EQUAL(4,
-                local({decl1, decl2},
-                      app(var(intern("posn-y")), {var(intern("p"))}))
-                        ->eval(primop::environment)->as_int());
+    CHECK(local({decl1, decl2},
+                app(var(intern("posn?")), {var(intern("p"))}))
+                  ->eval(primop::environment) ==
+          get_boolean(true));
+    CHECK(local({decl1, decl2},
+                app(var(intern("cons?")), {var(intern("p"))}))
+                  ->eval(primop::environment) ==
+          get_boolean(false));
+    CHECK(local({decl1, decl2},
+                app(var(intern("posn-x")), {var(intern("p"))}))
+                  ->eval(primop::environment)->as_int() ==
+          3);
+    CHECK(local({decl1, decl2},
+                app(var(intern("posn-y")), {var(intern("p"))}))
+                  ->eval(primop::environment)->as_int() ==
+          4);
 }
 
-TEST(Factorial_again)
+TEST_CASE("Factorial_again")
 {
-    CHECK_EQUAL(120, ev_string(
+    CHECK(ev_string(
             "(local [(define (fact n)"
             "          (cond"
             "           [(zero? n) 1]"
             "           [else (* n (fact (- n 1)))]))]"
             "  (fact 5))")
-            ->as_int());
+            ->as_int() ==
+          120);
 }
 
-TEST(EvenOdd)
+TEST_CASE("EvenOdd")
 {
-    CHECK_EQUAL(get_boolean(true), ev_string(
+    CHECK(ev_string(
             "(local [(define (even? n)"
             "          (cond [(zero? n) #t]"
             "                [else (odd? (- n 1))]))"
             "        (define (odd? n)"
             "          (cond [(zero? n) #f]"
             "                [else (even? (- n 1))]))]"
-            "  (even? 6))"));
+            "  (even? 6))") ==
+          get_boolean(true));
 }
 
-TEST(SumList)
+TEST_CASE("SumList")
 {
-    CHECK_EQUAL(10, ev_string(
+    CHECK(ev_string(
             "(local [(define (sum lst)"
             "          (cond [(empty? lst) 0]"
             "                [else (+ (first lst) (sum (rest lst)))]))]"
             "  (sum (cons 1 (cons 2 (cons 3 (cons 4 empty))))))")
-                ->as_int());
+                ->as_int() ==
+          10);
 }
 
-TEST(UsedBeforeDefine)
+TEST_CASE("UsedBeforeDefine")
 {
-    CHECK_THROW(ev_string(
+    CHECK_THROWS_AS(ev_string(
             "(local [(define a b)"
             "        (define b 5)] b)"),
                 std::runtime_error);
