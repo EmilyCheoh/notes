@@ -2,10 +2,9 @@
 
 #include "WU_graph.h"
 
-namespace ipd
-{
+namespace ipd {
 
-template <typename Element>
+template<typename Element>
 class Heap
 {
 public:
@@ -44,7 +43,7 @@ inline size_t right_child(size_t ix)
 
 }
 
-template <typename Element>
+template<typename Element>
 void Heap<Element>::insert(const Element& elt)
 {
     using namespace detail;
@@ -81,7 +80,7 @@ static size_t min_child(const std::vector<Element>& heap, size_t ix)
 
 }
 
-template <typename Element>
+template<typename Element>
 Element Heap<Element>::remove_min()
 {
     using namespace detail;
@@ -104,7 +103,7 @@ Element Heap<Element>::remove_min()
     return result;
 }
 
-template <typename Element>
+template<typename Element>
 const Element& Heap<Element>::peek_min() const
 {
     if (empty()) throw std::logic_error("Edge_heap::get_min(): empty heap");
@@ -112,17 +111,16 @@ const Element& Heap<Element>::peek_min() const
     return heap_[0];
 }
 
-template <typename Element>
+template<typename Element>
 bool Heap<Element>::empty() const
 {
     return heap_.empty();
 }
 
-template <typename Element>
+template<typename Element>
 size_t Heap<Element>::size() const
 {
     return heap_.size();
-
-
+}
 
 }
