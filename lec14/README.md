@@ -200,12 +200,12 @@ Here’s how we templatize the `Heap` class:
 template <typename Element>
 class Heap
 {
-    void insert(const Element&);
+    void insert(Element const&);
     ...
 ```
 
-Read `template` as “for all”: For all types `Element`, class `Heap` is has 
-the following members: an `insert` function taking a contant reference to an 
+Read `template` as “for all”: For all types `Element`, class `Heap` has 
+the following members: an `insert` function taking a constant reference to an 
 `Element`…
 
 When you use `Heap`, like `Heap<int>` or `Heap<double>`, then `Element` means
@@ -214,7 +214,8 @@ declaration in `src/Heap.h`. You may notice that there’s much more code in
 that file than usual—in fact, the whole implementation is in the header, and 
 there’s no .cpp file. Why? One of the rules of templates is that all 
 templated code, which includes all the member functions of the class, *must 
-appear in a header*.
+be directly visible to any code that uses it*. In practice, this means that 
+templates are usually defined in headers.
 
 You should also notice that each member declared outside the class has a 
 `template <typename Element>` line in front of it, and that’s because each 
@@ -224,13 +225,13 @@ and you will see that they are no longer assuming the particular
 `known_distance` struct, but rather comparing the elements directly.
 
 You should also notice that the helpers for converting tree movements to 
-array indices (`parent`, `left_child`) are in a sub-namespace, `heap_helpers`.
+array indices (`parent`, `left_child`) are in a sub-namespace, `detail`.
 This is so they don’t pollute the main `ipd` namespace, since they don’t have
 meaning outside that file. And note that they are marked `inline`, which is 
-required for non-template functions defined in headers. (If you want to try 
-to understand why, look up C++’s “One Definition Rule.”)
+required for non-template functions defined in headers. (If you want to
+understand why, look up C++’s “One Definition Rule.”)
 
 `test/heap_test.cpp` contains a test of a `Heap<int>` and a version of 
 Dijkstra’s algorithm using `Heap<known_distance>`. Note that
-`operator<(const known_distance&, const known_distance&)` has to be 
+`operator<(known_distance, known_distance)` has to be 
 overloaded to tell the heap how to order things.
