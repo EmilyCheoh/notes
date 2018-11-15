@@ -20,7 +20,7 @@ private:
     std::vector<Element> heap_;
 };
 
-namespace heap_helpers {
+namespace detail {
 
 inline bool is_root(size_t ix)
 {
@@ -47,7 +47,7 @@ inline size_t right_child(size_t ix)
 template <typename Element>
 void Heap<Element>::insert(const Element& elt)
 {
-    using namespace heap_helpers;
+    using namespace detail;
 
     size_t ix = heap_.size();
     heap_.push_back(elt);
@@ -58,20 +58,23 @@ void Heap<Element>::insert(const Element& elt)
     }
 }
 
-namespace heap_helpers {
+namespace detail {
 
 template<typename Element>
 static size_t min_child(const std::vector<Element>& heap, size_t ix)
 {
-    using namespace heap_helpers;
+    using namespace detail;
+
+    size_t lc = left_child(ix);
+    size_t rc = right_child(ix);
 
     size_t result = ix;
 
-    if (left_child(ix) < heap.size() && heap[left_child(ix)] < heap[result])
-        result = left_child(ix);
+    if (lc < heap.size() && heap[lc] < heap[result])
+        result = lc;
 
-    if (right_child(ix) < heap.size() && heap[right_child(ix)] < heap[result])
-        result = right_child(ix);
+    if (rc < heap.size() && heap[rc] < heap[result])
+        result = rc;
 
     return result;
 }
@@ -81,7 +84,7 @@ static size_t min_child(const std::vector<Element>& heap, size_t ix)
 template <typename Element>
 Element Heap<Element>::remove_min()
 {
-    using namespace heap_helpers;
+    using namespace detail;
 
     if (empty()) throw std::logic_error("Edge_heap::remove_min(): empty heap");
 
@@ -119,7 +122,7 @@ template <typename Element>
 size_t Heap<Element>::size() const
 {
     return heap_.size();
-}
+
 
 
 }

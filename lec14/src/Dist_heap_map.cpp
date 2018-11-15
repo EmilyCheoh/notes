@@ -26,10 +26,7 @@ static size_t right_child(size_t ix)
     return 2 * ix + 2;
 }
 
-size_t constexpr BAD_INDEX()
-{
-    return std::numeric_limits<size_t>::max();
-}
+size_t constexpr BAD_INDEX = std::numeric_limits<size_t>::max();
 
 Dist_heap_map::dist constexpr INFINITY()
 {
@@ -40,7 +37,7 @@ void Dist_heap_map::update(known_distance kd)
 {
     size_t ix = index_of_(kd.v);
 
-    if (ix == BAD_INDEX()) {
+    if (ix == BAD_INDEX) {
         if (kd.w != INFINITY()) insert_(kd);
     }
     else if (kd.w == INFINITY()) remove_(ix);
@@ -67,7 +64,7 @@ Dist_heap_map::operator[](key v) const
 {
     size_t index = index_of_(v);
 
-    if (index == BAD_INDEX()) return INFINITY();
+    if (index == BAD_INDEX) return INFINITY();
     else return heap_[index].w;
 }
 
@@ -111,7 +108,7 @@ size_t Dist_heap_map::index_of_(key v) const
     if (v < indices_.size()) {
         return indices_[v];
     } else {
-        return BAD_INDEX();
+        return BAD_INDEX;
     }
 }
 
@@ -163,11 +160,11 @@ void Dist_heap_map::pop_back_()
     key v = heap_.back().v;
     heap_.pop_back();
 
-    indices_[v] = BAD_INDEX();
+    indices_[v] = BAD_INDEX;
 
 // This destroys our amortized complexity, and it isn't necessary:
     /*
-    while (!indices_.empty() && indices_.back() == BAD_INDEX())
+    while (!indices_.empty() && indices_.back() == BAD_INDEX)
         indices_.pop_back();
     */
 }
@@ -175,7 +172,7 @@ void Dist_heap_map::pop_back_()
 void Dist_heap_map::push_back_(known_distance kd)
 {
     while (kd.v >= indices_.size())
-        indices_.push_back(BAD_INDEX());
+        indices_.push_back(BAD_INDEX);
     indices_[kd.v] = heap_.size();
 
     heap_.push_back(kd);
