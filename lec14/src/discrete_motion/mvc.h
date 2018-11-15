@@ -39,4 +39,32 @@ private:
     // In other words, room_ contains player_.
 };
 
+class View
+{
+public:
+    explicit View(Model const&);
+
+    void draw(ge211::Sprite_set&) const;
+
+private:
+    Model const& model_;
+    ge211::Rectangle_sprite room_;
+    ge211::Rectangle_sprite player_;
+};
+
+class Game : public ge211::Abstract_game
+{
+public:
+    explicit Game(ge211::Dimensions margin);
+
+protected:
+    // Controller:
+    void draw(ge211::Sprite_set&) override;
+    void on_key(ge211::Key) override;
+
+private:
+    Model model_;
+    View view_;
+};
+
 } // end namespace motion
