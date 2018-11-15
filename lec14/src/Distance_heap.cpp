@@ -25,7 +25,7 @@ static size_t right_child(size_t ix)
     return 2 * ix + 2;
 }
 
-void Distance_heap::insert(const known_distance& kd)
+void Distance_heap::insert(known_distance kd)
 {
     size_t ix = heap_.size();
     heap_.emplace_back(kd);
@@ -69,7 +69,7 @@ known_distance Distance_heap::remove_min()
     return result;
 }
 
-const known_distance& Distance_heap::peek_min() const
+known_distance Distance_heap::peek_min() const
 {
     if (empty()) throw std::logic_error("Edge_heap::get_min(): empty heap");
 

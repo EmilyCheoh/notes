@@ -36,7 +36,7 @@ Dist_heap_map::dist constexpr INFINITY()
     return std::numeric_limits<Dist_heap_map::dist>::infinity();
 }
 
-void Dist_heap_map::update(const known_distance& kd)
+void Dist_heap_map::update(known_distance kd)
 {
     size_t ix = index_of_(kd.v);
 
@@ -55,7 +55,7 @@ Dist_heap_map::known_distance Dist_heap_map::remove_min()
     return result;
 }
 
-const Dist_heap_map::known_distance& Dist_heap_map::peek_min() const
+Dist_heap_map::known_distance Dist_heap_map::peek_min() const
 {
     if (empty()) throw std::logic_error("Edge_heap::peek_min(): empty heap");
 
@@ -81,19 +81,19 @@ size_t Dist_heap_map::size() const
     return heap_.size();
 }
 
-void Dist_heap_map::insert_(const known_distance& kd)
+void Dist_heap_map::insert_(known_distance kd)
 {
     push_back_(kd);
     bubble_up_(size() - 1);
 }
 
-void Dist_heap_map::increase_key_(size_t ix, const known_distance& kd)
+void Dist_heap_map::increase_key_(size_t ix, known_distance kd)
 {
     heap_[ix].w = kd.w;
     percolate_down_(ix);
 }
 
-void Dist_heap_map::decrease_key_(size_t ix, const known_distance& kd)
+void Dist_heap_map::decrease_key_(size_t ix, known_distance kd)
 {
     heap_[ix].w = kd.w;
     bubble_up_(ix);
@@ -172,7 +172,7 @@ void Dist_heap_map::pop_back_()
     */
 }
 
-void Dist_heap_map::push_back_(const known_distance& kd)
+void Dist_heap_map::push_back_(known_distance kd)
 {
     while (kd.v >= indices_.size())
         indices_.push_back(BAD_INDEX());

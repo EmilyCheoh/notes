@@ -14,9 +14,9 @@ struct known_distance
 class Distance_heap
 {
 public:
-    void insert(const known_distance&);
+    void insert(known_distance);
     known_distance remove_min();
-    const known_distance& peek_min() const;
+    known_distance peek_min() const;
 
     bool empty() const;
     size_t size() const;

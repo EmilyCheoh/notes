@@ -18,8 +18,8 @@ namespace ipd
 class Dist_heap_map
 {
 public:
-    using key = size_t;
-    using dist = double;
+    using key = WU_graph::vertex;
+    using dist = WU_graph::weight;
 
     struct known_distance
     {
@@ -30,9 +30,9 @@ public:
     // Updates the weight of a particular key. Each key is mapped to a
     // unique weight and thus this may update the weight of an already finite
     // key.
-    void update(const known_distance&);
+    void update(known_distance);
     known_distance remove_min();
-    const known_distance& peek_min() const;
+    known_distance peek_min() const;
 
     // Returns the weight associated with a particular key; infinity if not
     // found.
@@ -49,13 +49,13 @@ private:
 
     // Inserts the given pairing.
     // PRECONDITION: the key is absent.
-    void insert_(const known_distance&);
+    void insert_(known_distance);
     // Increases the key of the given pairing.
     // PRECONDITION: the key is present at `ix`, mapped to a lesser distance.
-    void increase_key_(size_t ix, const known_distance&);
+    void increase_key_(size_t ix, known_distance);
     // Decreases the key of the given pairing.
     // PRECONDITION: the key is present at `ix`, mapped to a greater distance.
-    void decrease_key_(size_t ix, const known_distance&);
+    void decrease_key_(size_t ix, known_distance);
     // Removes the pairing at the given index.
     // PRECONDITION: the index is in bounds.
     void remove_(size_t ix);
@@ -77,7 +77,7 @@ private:
     // Swaps two elements in the heap, updating indices_.
     void swap_(size_t, size_t);
     // Adds an element to the back of the heap, updating indices_.
-    void push_back_(const known_distance& kd);
+    void push_back_(known_distance kd);
 };
 
 }
