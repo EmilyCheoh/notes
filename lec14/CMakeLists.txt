@@ -34,3 +34,13 @@ add_program(discrete_motion
         src/discrete_motion/mvc.cpp
         src/discrete_motion/main.cpp)
 target_link_libraries(discrete_motion ge211)
+
+add_program(continuous_motion_test
+        test/continuous_motion_test.cpp
+        src/continuous_motion/mvc.cpp)
+target_link_libraries(continuous_motion_test ge211 catch)
+
+add_program(continuous_motion
+        src/continuous_motion/mvc.cpp
+        src/continuous_motion/main.cpp)
+target_link_libraries(continuous_motion ge211)

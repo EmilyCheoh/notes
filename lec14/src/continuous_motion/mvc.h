@@ -10,9 +10,12 @@ namespace motion
 class Model
 {
 public:
-    // We'll represent rectangles using ge211's standard Rectangle type,
-    // which is struct with four int fields: x, y, width, and height.
-    using Rectangle = ge211::Rectangle;
+    // We want to use doubles as coordinates instead of ints.
+    using Coordinate = double;
+
+    // We'll represent rectangles using ge211's Basic_rectangle type,
+    // with four double fields: x, y, width, and height.
+    using Rectangle = ge211::Basic_rectangle<Coordinate>;
 
     // Constructs a new model with the given room rectangle.
     explicit Model(Rectangle room);
@@ -26,7 +29,7 @@ public:
     // Moves the player by the given x and y displacements. If
     // the motion would move the player outside the room, the
     // player moves only to the boundary instead.
-    void move_player(int dx, int dy);
+    void move_player(Coordinate dx, Coordinate dy);
 
 private:
     Rectangle player_;
@@ -57,21 +60,38 @@ private:
     ge211::Rectangle_sprite player_;    // image of player
 };
 
+// Stores control state and encapsulates control logic.
+class Controller
+{
+public:
+    Controller(Model&, View&);
+
+    void update_mouse_position(ge211::Position);
+    void pass_time(double seconds);
+
+private:
+    bool started_ = false;
+    ge211::Position mouse_{0, 0};
+    Model& model_;
+    View& view_;
+};
+
 // Packages the components together and routes control events
-// to them.
+// to the controller.
 class Game : public ge211::Abstract_game
 {
 public:
     explicit Game(ge211::Dimensions margin);
 
 protected:
-    // Controller:
     void draw(ge211::Sprite_set&) override;
-    void on_key(ge211::Key) override;
+    void on_mouse_move(ge211::Position) override;
+    void on_frame(double last_frame_seconds) override;
 
 private:
     Model model_;
     View view_;
+    Controller controller_;
 };
 
 } // end namespace motion
