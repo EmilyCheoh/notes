@@ -15,10 +15,10 @@ public:
     using weight    = double;
 
     // NO_EDGE == +inf.0, representing the absence of an edge:
-    static const double NO_EDGE;
+    static weight const NO_EDGE;
 
     // Constructs a new graph with the given number of vertices.
-    WU_graph(size_t);
+    explicit WU_graph(size_t);
 
     // Adds an edge with the given weight.
     void add_edge(vertex, vertex, double);
@@ -26,7 +26,7 @@ public:
     // Returns the number of vertices in this graph.
     size_t size() const;
 
-    // Gets a vector of all vertices connected to the given key by finite
+    // Gets a vector of all vertices connected to the given vertex by finite
     // edges.
     std::vector<vertex> get_neighbors(vertex) const;
 
@@ -38,11 +38,11 @@ private:
 
     void bounds_check_(vertex) const;
 
-    friend bool operator==(const WU_graph&, const WU_graph&);
+    friend bool operator==(WU_graph const&, WU_graph const&);
 };
 
 // Compares two graphs for equality by comparing all edges and weights.
-bool operator==(const WU_graph&, const WU_graph&);
+bool operator==(WU_graph const&, WU_graph const&);
 
 // A triple representing a single weighted edge. Used in return value of
 // `get_all_edges` (below).
@@ -57,25 +57,25 @@ struct WU_edge {
 };
 
 // Gets a vector of all edges in the graph.
-std::vector<WU_edge> get_all_edges(const WU_graph&);
+std::vector<WU_edge> get_all_edges(WU_graph const&);
 
 // Holds the result of computing SSSP.
 struct SSSP_result {
     // Initializes an SSSP result for a graph of the given size.
-    SSSP_result(size_t);
+    explicit SSSP_result(size_t);
 
-    // Gives the predecessor along the shortest path to each key, or an
-    // invalid value if that key is unreachable.
+    // Gives the predecessor along the shortest path to each vertex, or an
+    // invalid value if that vertex is unreachable.
     std::vector<WU_graph::vertex> pred;
-    // Gives the distance from the start node to each key, or
+    // Gives the distance from the start node to each vertex, or
     // WU_graph::NO_EDGE if unreachable.
     std::vector<WU_graph::weight> dist;
 };
 
 // Computes SSSP by Bellman-Ford algorithm.
-SSSP_result bellman_ford(const WU_graph&, WU_graph::vertex start);
+SSSP_result bellman_ford(WU_graph const&, WU_graph::vertex start);
 
 // Computes SSSP by Dijkstra's algorithm.
-SSSP_result dijkstra(const WU_graph&, WU_graph::vertex start);
+SSSP_result dijkstra(WU_graph const&, WU_graph::vertex start);
 
 }
