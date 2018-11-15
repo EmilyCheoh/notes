@@ -62,18 +62,15 @@ namespace detail {
 template<typename Element>
 static size_t min_child(const std::vector<Element>& heap, size_t ix)
 {
-    using namespace detail;
-
-    size_t lc = left_child(ix);
-    size_t rc = right_child(ix);
-
     size_t result = ix;
 
-    if (lc < heap.size() && heap[lc] < heap[result])
-        result = lc;
+    auto check = [&](size_t child) {
+        if (child < heap.size() && heap[child].w < heap[result].w)
+            result = child;
+    };
 
-    if (rc < heap.size() && heap[rc] < heap[result])
-        result = rc;
+    check(detail::left_child(ix));
+    check(detail::right_child(ix));
 
     return result;
 }
