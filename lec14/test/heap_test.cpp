@@ -45,7 +45,7 @@ struct known_distance {
     WU_graph::weight w;
 };
 
-bool operator<(const known_distance& kd1, const known_distance& kd2)
+bool operator<(known_distance kd1, known_distance kd2)
 {
     return kd1.w < kd2.w;
 }
