@@ -44,3 +44,18 @@ add_program(continuous_motion
         src/continuous_motion/mvc.cpp
         src/continuous_motion/main.cpp)
 target_link_libraries(continuous_motion ge211)
+
+add_program(connect4_test
+        test/connect4_test.cpp
+        src/connect4/model.cpp
+        src/connect4/view.cpp
+        src/connect4/controller.cpp)
+target_link_libraries(connect4_test ge211 catch)
+
+add_program(connect4
+        src/connect4/connect4.cpp
+        src/connect4/model.cpp
+        src/connect4/view.cpp
+        src/connect4/controller.cpp)
+target_link_libraries(connect4 ge211)
+
