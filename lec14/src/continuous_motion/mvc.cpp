@@ -14,7 +14,7 @@ Color const room_color = Color::medium_red().darken(.5);
 Color const player_color = Color::white();
 
 // Controller constants
-double const speed = 0.01;
+double const speed = 1.5;
 
 //
 // Model implementation
@@ -89,7 +89,7 @@ void Controller::pass_time(double seconds)
     if (!started_) return;
 
     auto displacement = mouse_.into<double>() - model_.get_player().center();
-    auto change = speed * displacement;
+    auto change = speed * seconds * displacement;
     model_.move_player(change.width, change.height);
 }
 
