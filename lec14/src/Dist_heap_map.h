@@ -9,7 +9,7 @@ namespace ipd
 // key that it stores to its unique location in the heap. This means that:
 //
 //  - It cannot contain the same key more than once.
-//  - Instead of an insert operation, it offer an update operation that will
+//  - Instead of an insert operation, it offers an update operation that will
 //    move the key within the heap if it's already there.
 //
 // Absence from the heap and a distance of infinity are considered equivalent.
