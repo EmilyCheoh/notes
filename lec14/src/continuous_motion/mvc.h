@@ -66,12 +66,15 @@ class Controller
 public:
     Controller(Model&, View&);
 
+    // Record that the mouse position has changed.
     void update_mouse_position(ge211::Position);
+
+    // Update the model for the passage of time.
     void pass_time(double seconds);
 
 private:
-    bool started_ = false;
-    ge211::Position mouse_{0, 0};
+    bool started_ = false;          // is `mouse_` valid?
+    ge211::Position mouse_{0, 0};   // last known mouse position
     Model& model_;
     View& view_;
 };
