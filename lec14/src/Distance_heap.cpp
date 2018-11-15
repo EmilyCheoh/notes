@@ -40,11 +40,13 @@ static size_t min_child(const std::vector<known_distance>& heap, size_t ix)
 {
     size_t result = ix;
 
-    if (left_child(ix) < heap.size() && heap[left_child(ix)].w < heap[result].w)
-        result = left_child(ix);
+    auto check = [&](size_t child) {
+        if (child < heap.size() && heap[child].w < heap[result].w)
+            result = child;
+    };
 
-    if (right_child(ix) < heap.size() && heap[right_child(ix)].w < heap[result].w)
-        result = right_child(ix);
+    check(left_child(ix));
+    check(right_child(ix));
 
     return result;
 }

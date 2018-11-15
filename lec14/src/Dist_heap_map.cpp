@@ -116,13 +116,13 @@ size_t Dist_heap_map::min_child_(size_t ix) const
 {
     size_t result = ix;
 
-    if (left_child(ix) < heap_.size() &&
-            heap_[left_child(ix)].w < heap_[result].w)
-        result = left_child(ix);
+    auto check = [&](size_t child) {
+        if (child < heap_.size() && heap_[child].w < heap_[result].w)
+            result = child;
+    };
 
-    if (right_child(ix) < heap_.size() &&
-            heap_[right_child(ix)].w < heap_[result].w)
-        result = right_child(ix);
+    check(left_child(ix));
+    check(right_child(ix));
 
     return result;
 }
