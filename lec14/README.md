@@ -10,10 +10,10 @@ like this:
       - pred[v] := undef
       - visited[v] := false
       
-2.  For the starting key s,
+2.  For the starting vertex s,
       - dist[s] := 0
       
-3.  Find the minimum distance unvisited key v; if there is no such key,
+3.  Find the minimum-distance unvisited key v; if there is no such key,
     terminate.
     
 4.  Mark v as visited. Relax each outgoing edge of v.
@@ -43,8 +43,8 @@ the left. That is, nodes are only added and removed at the end of the
 level-order traversal. This will be important in a bit.
 
 The binary heap has the same heap condition as the binomial heap, namely, 
-that every node’s value is less than its children’s values (and by 
-transitivity, their children’s).
+that every node’s value is less than or equal to its children’s values
+(and by transitivity, their children’s).
 
 To add an element to the heap, we add a node
 containing the new element to the end of the level-order traversal—that is, 
@@ -62,8 +62,8 @@ at the root, and it may be greater than one of its children! So we check its
 children, finding the smaller of the two, and swap it with that one. Then 
 proceed down the tree, swapping with the smaller of the children, until 
 either the node is less than both children, or there are no children to swap 
-with. This procedure, called trickling down, also restores the heap invariant.
-Why?
+with. This procedure, called percolating down, also restores the heap 
+invariant. Why?
 
 ### Why a complete tree?
 
@@ -129,14 +129,14 @@ double distance(const int_posn& p, const int_posn& q)
 {
     int dx = p.x - q.x;
     int dy = p.y - q.y;
-    return sqrt(dx*dx + dy*dy);
+    return std::sqrt(dx*dx + dy*dy);
 }
 
 double distance(const double_posn& p, const double_posn& q)
 {
     double dx = p.x - q.x;
     double dy = p.y - q.y;
-    return sqrt(dx*dx + dy*dy);
+    return std::sqrt(dx*dx + dy*dy);
 }
 ```
 
@@ -181,7 +181,7 @@ double distance(const posn<T>& p, const posn<T>& q)
 {
     T dx = p.x - q.x;
     T dy = p.y - q.y;
-    return sqrt(dx*dx + dy*dy);
+    return std::sqrt(dx*dx + dy*dy);
 }
 ```
 

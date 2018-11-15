@@ -14,5 +14,5 @@ double distance(const posn<T>& p, const posn<T>& q)
 {
     T dx = p.x - q.x;
     T dy = p.y - q.y;
-    return sqrt(dx*dx + dy*dy);
+    return std::sqrt(dx*dx + dy*dy);
 }
