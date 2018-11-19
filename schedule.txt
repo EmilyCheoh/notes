@@ -18,9 +18,10 @@
   * 11/08: Exam
 13  11/13: classes and data hiding (J); union-find, again (J); a graph class (J)
 14  11/15: binary heap (J); making heap generic (J); model-view-controller (J)
-15  11/20: memory & pointers (J); linked list queue (J); binary search tree (J)
+15* 11/20: more MVC (J); memory & pointers (J); linked data structures (J)
     11/22: – Thanksgiving–
-16* 11/27: hashing (R); vector hash table (R); open-addressing hash table (R)
-17* 11/29: Bloom filter (J); doubly-linked list deque (J); Huffman (J)
-18  12/04: binomial heap (R); final project discussion
-19  12/06: object-oriented graphics library (J)
+16* 11/27: Huffman coding (J); hashing (J); final project discussion
+
+17* 11/29: hash tables (J); Bloom filter (J); doubly-linked list deque (J)
+18  12/04: binomial heap (R)
+19  12/06: TBD
