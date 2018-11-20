@@ -45,7 +45,7 @@ template <typename T>
 T Queue<T>::dequeue()
 {
     if (empty())
-        throw std::logic_error("LL_queue::dequeue(): empty queue");
+        throw std::logic_error("Queue::dequeue(): empty queue");
 
     T result = head_->element;
     head_ = std::move(head_->next);

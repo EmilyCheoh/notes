@@ -77,7 +77,7 @@ Suppose `d` is a shared pointer to an `aquarium`. How can we access the
 member of a pointer.
 
 So, here is a function to sum up the weights of all the fishes in an 
-`acquarium`:
+`aquarium`:
 
 ```c++
 double sum_aquarium(std::shared_ptr<aquarium> aq)
@@ -186,9 +186,6 @@ const Int_list& rest(const Int_list&);
 
 See the definitions of these functions in `src/Cons_list.cpp`.
 
-Notice that when `p` is a pointer to a struct with member `x`, we refer to `x` 
-as `p->x`.
-
 ## Constant-time FIFO
 
 We can use a linked list to implement a FIFO queue with constant time 
@@ -243,10 +240,11 @@ a node, it uses `new node_(ARGS)`. It also has to explicitly `delete` nodes
 when it is done with them.
 
 Finally, there is a unique pointer type `std::unique_ptr<T>`, which does not 
-allow multiple references, and frees the memory as soon as it goes away. We 
-can build our list using unique pointers, but we cannot have a second unique 
-pointer for the tail of the list. That is, the last node of the list has two 
-pointers to it: one from the previous node, and one from the `tail_` member 
-of `Queue`, and they cannot both be unique. Instead, the main pointers of the
-list are unique, and the tail pointer is a raw pointer to the same tail node.
-Given a unique pointer `p`, we get the raw pointer to the same memory as `&*p`.
+allow multiple references, and frees the memory as soon as the only pointer 
+goes away. We can build our list using unique pointers, but we cannot have
+a second unique pointer for the tail of the list. That is, the last node
+of the list has two pointers to it: one from the previous node, and one
+from the `tail_` member of `Queue`, and they cannot both be unique.
+Instead, the main pointers of the list are unique, and the tail pointer
+is a raw pointer to the same tail node. Given a unique pointer `p`, we
+get the raw pointer to the same memory as `p.get()`.
