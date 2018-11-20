@@ -1,25 +1,29 @@
 cmake_minimum_required(VERSION 3.3)
-project(lecture CXX)
+project(lec15 CXX)
 include(.ipd/cmake/CMakeLists.txt)
 
-add_test_program(vec_hash_test test/Vec_hash_test.cpp src/Vec_hash.h)
+add_program(connect4_test
+        test/connect4_test.cpp
+        src/connect4/model.cpp
+        src/connect4/view.cpp
+        src/connect4/controller.cpp)
+target_link_libraries(connect4_test ge211 catch)
 
-add_program(collisions src/Vec_hash.h src/collisions.cpp src/Various_hashes.h
-        src/hamlet.cpp)
+add_program(connect4
+        src/connect4/connect4.cpp
+        src/connect4/model.cpp
+        src/connect4/view.cpp
+        src/connect4/controller.cpp)
+target_link_libraries(connect4 ge211)
 
-add_program(avalanche src/avalanche.cpp src/Various_hashes.h)
+add_test_program(list_test
+        test/list_test.cpp
+        src/Cons_list.h src/Cons_list.cpp)
 
-add_test_program(done_vec_hash_test test-done/Vec_hash_test_done.cpp
-        src-done/Vec_hash_done.h)
-add_test_program(done_open_hash_test test-done/Open_hash_test_done.cpp
-        src-done/Open_hash_done.h)
-add_program(done_collision src-done/Vec_hash_done.h
-        src-done/hash_trial_done.cpp
-        src-done/collisions_done.cpp
-        src-done/Various_hashes_done.h
-        src/hamlet.cpp)
-add_program(done_collision2 src-done/Vec_hash_done.h
-        src-done/hash_trial_done.cpp
-        src-done/collisions2_done.cpp
-        src-done/Various_hashes_done.h
-        src/hamlet.cpp)
+add_test_program(vec_test
+        test/vec_test.cpp
+        src/My_vec.h)
+
+add_test_program(queue_test
+        test/queue_test.cpp
+        src/SP_queue.h src/RP_queue.h src/UP_queue.h)
