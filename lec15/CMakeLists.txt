@@ -16,6 +16,8 @@ add_program(connect4
         src/connect4/controller.cpp)
 target_link_libraries(connect4 ge211)
 
+add_program(fish src/fish.cpp)
+
 add_test_program(list_test
         test/list_test.cpp
         src/Cons_list.h src/Cons_list.cpp)

@@ -21,3 +21,15 @@ TEST_CASE("Exception")
     CHECK_THROWS_AS(first(x), std::logic_error);
     CHECK_THROWS_AS(rest(x), std::logic_error);
 }
+
+TEST_CASE("Append")
+{
+    auto x = cons(5, cons(6, cons(7, nullptr)));
+    auto y = cons(8, cons(9, nullptr));
+    auto z = append(x, y);
+
+    CHECK(first(z) == 5);
+    CHECK(first(rest(rest(rest(z)))) == 8);
+    CHECK(first(rest(rest(rest(rest(z))))) == 9);
+    CHECK(rest(rest(rest(rest(rest(z))))) == nullptr);
+}

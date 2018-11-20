@@ -1,6 +1,6 @@
-## A linked list
+# Pointers and Linked Data Structures
 
-And now for something completely different...
+## Return of the humble linked list
 
 ### Story 1
 
@@ -46,7 +46,7 @@ struct aquarium
 }
 ```
 
-A `std::shared_ptr` has a size that does not depend on the size of 
+A `std::shared_ptr<aquarium>` has a size that does not depend on the size of 
 `aquarium`, so now
 
 ```c++
@@ -65,10 +65,32 @@ refers to nothing. So that’s what we put in the rest field for the last node
 of the list.
 
 ```c++
-std::shared_ptr<aquarium> a = make_shared<aquarium>(one_fish, nullptr);
-std::shared_ptr<aquarium> b = make_shared<aquarium>(two_fish, a);
-std::shared_ptr<aquarium> c = make_shared<aquarium>(red_fish, b);
-std::shared_ptr<aquarium> d = make_shared<aquarium>(blue_fish, c);
+std::shared_ptr<aquarium> a = std::make_shared<aquarium>(one_fish, nullptr);
+std::shared_ptr<aquarium> b = std::make_shared<aquarium>(two_fish, a);
+std::shared_ptr<aquarium> c = std::make_shared<aquarium>(red_fish, b);
+std::shared_ptr<aquarium> d = std::make_shared<aquarium>(blue_fish, c);
+```
+
+Suppose `d` is a shared pointer to an `aquarium`. How can we access the 
+`first` and `rest` fields? Not with `d.first` and `d.rest`, but with 
+`d->first` and `d->rest`. You can think of `->` as the operator for getting a
+member of a pointer.
+
+So, here is a function to sum up the weights of all the fishes in an 
+`acquarium`:
+
+```c++
+double sum_aquarium(std::shared_ptr<aquarium> aq)
+{
+    double result = 0;
+
+    while (aq != nullptr) {
+        result += aq->first.weight;
+        aq = aq->rest;
+    }
+
+    return result;
+}
 ```
 
 ### Story 2
@@ -103,7 +125,7 @@ There’s another place we can allocate, called the *heap*, and we do it with
 `make_shared`. Then we can return the pointer, and so long as the pointer 
 exists, it will keep the variable on the heap alive as well.
 
-### A linked list struct
+## A linked list struct
 
 See `src/Cons_list.h` for a minimal, BSL-like linked-list class. The main 
 definition of the struct is something like:

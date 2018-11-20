@@ -4,16 +4,20 @@
 
 struct Int_cons;
 
+// Immutable, shared-tail, reference-counted int lists.
 using Int_list = std::shared_ptr<Int_cons>;
 
 struct Int_cons
 {
-    const int first;
-    const Int_list rest;
+    int const first;
+    Int_list const rest;
 
-    Int_cons(int, const Int_list&);
+    Int_cons(int, Int_list const&);
 };
 
-Int_list cons(int, const Int_list&);
-int first(const Int_list&);
-const Int_list& rest(const Int_list&);
+// Like in BSL:
+Int_list cons(int, Int_list const&);
+int first(Int_list const&);
+Int_list const& rest(Int_list const&);
+
+Int_list append(Int_list const& before, Int_list const& after);
