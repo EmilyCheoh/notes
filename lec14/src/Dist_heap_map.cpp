@@ -1,6 +1,7 @@
 #include "Dist_heap_map.h"
 
 #include <cmath>
+#include <limits>
 #include <utility>
 
 namespace ipd
