@@ -1,12 +1,12 @@
 #include "WU_graph.h"
 
 #include <cassert>
+#include <cmath>
 #include <stdexcept>
 
 namespace ipd {
 
-WU_graph::weight const WU_graph::NO_EDGE =
-        std::numeric_limits<double>::infinity();
+WU_graph::weight const WU_graph::NO_EDGE = INFINITY;
 
 WU_graph::WU_graph(size_t size)
 {

@@ -1,6 +1,6 @@
 #include "Dist_heap_map.h"
 
-#include <limits>
+#include <cmath>
 #include <utility>
 
 namespace ipd
@@ -28,19 +28,14 @@ static size_t right_child(size_t ix)
 
 size_t constexpr BAD_INDEX = std::numeric_limits<size_t>::max();
 
-Dist_heap_map::dist constexpr INFINITY()
-{
-    return std::numeric_limits<Dist_heap_map::dist>::infinity();
-}
-
 void Dist_heap_map::update(known_distance kd)
 {
     size_t ix = index_of_(kd.v);
 
     if (ix == BAD_INDEX) {
-        if (kd.w != INFINITY()) insert_(kd);
+        if (kd.w != INFINITY) insert_(kd);
     }
-    else if (kd.w == INFINITY()) remove_(ix);
+    else if (kd.w == INFINITY) remove_(ix);
     else if (kd.w < heap_[ix].w) decrease_key_(ix, kd);
     else if (kd.w > heap_[ix].w) increase_key_(ix, kd);
 }
@@ -64,7 +59,7 @@ Dist_heap_map::operator[](key v) const
 {
     size_t index = index_of_(v);
 
-    if (index == BAD_INDEX) return INFINITY();
+    if (index == BAD_INDEX) return INFINITY;
     else return heap_[index].w;
 }
 
