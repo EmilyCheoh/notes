@@ -14,7 +14,7 @@ WU_graph::WU_graph(size_t size)
         weights_.emplace_back(size, NO_EDGE);
 }
 
-void WU_graph::add_edge(vertex u, vertex v, double w)
+void WU_graph::add_edge(vertex u, vertex v, weight w)
 {
     bounds_check_(u);
     bounds_check_(v);

@@ -20,7 +20,7 @@ public:
     explicit WU_graph(size_t);
 
     // Adds an edge with the given weight.
-    void add_edge(vertex, vertex, double);
+    void add_edge(vertex, vertex, weight);
 
     // Returns the number of vertices in this graph.
     size_t size() const;
