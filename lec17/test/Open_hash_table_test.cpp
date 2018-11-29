@@ -1,25 +1,24 @@
 #include <catch.h>
 #include "Open_hash_table.h"
 
-TEST_CASE("HASH1")
+TEST_CASE("lookup() const")
 {
     Open_hash_table<int> vh;
     vh.insert("abc", 1);
-    const auto & vhc=vh;
+    auto const& vhc = vh;
     CHECK(vhc.lookup("abc") == 1);
 }
 
-
-TEST_CASE("HASH2")
+TEST_CASE("lookup(), assign")
 {
     Open_hash_table<int> vh(10);
     vh.insert("abc", 1);
-    vh.lookup("abc")=2;
+    vh.lookup("abc") = 2;
     CHECK(vh.lookup("abc") == 2);
 }
 
 
-TEST_CASE("HASH3")
+TEST_CASE("more")
 {
     Open_hash_table<int> vh(2);
     vh.insert("abc", 1);
@@ -29,7 +28,7 @@ TEST_CASE("HASH3")
 }
 
 
-TEST_CASE("HASH4")
+TEST_CASE("replace")
 {
     Open_hash_table<int> vh(1);
     vh.insert("abc", 1);
@@ -37,7 +36,7 @@ TEST_CASE("HASH4")
     CHECK(vh.lookup("abc") == 2);
 }
 
-TEST_CASE("Member")
+TEST_CASE("member")
 {
     Open_hash_table<int> vh(100);
     CHECK(!vh.member("a1"));
@@ -50,7 +49,7 @@ TEST_CASE("Member")
     CHECK(vh.member("a2"));
 }
 
-TEST_CASE("HASH5")
+TEST_CASE("grow")
 {
     Open_hash_table<int> vh(2);
     vh.insert("abc", 1);
@@ -61,7 +60,7 @@ TEST_CASE("HASH5")
     CHECK(vh.lookup("ghi") == 3);
 }
 
-TEST_CASE("GrowFromEmpty")
+TEST_CASE("grow from 0")
 {
     Open_hash_table<int> vh(0);
     CHECK(vh.size() == 0);
@@ -76,7 +75,7 @@ TEST_CASE("GrowFromEmpty")
     CHECK(vh.lookup("def") == 2);
 }
 
-TEST_CASE("LookupThrows")
+TEST_CASE("lookup throws")
 {
     Open_hash_table<int> vh;
 

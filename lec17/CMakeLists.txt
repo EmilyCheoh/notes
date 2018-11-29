@@ -37,6 +37,11 @@ add_test_program(bf_test
         src/Bloom_filter.cpp
         src/Sbox_hash.cpp)
 
+add_test_program(flat_bf_test
+        test/flat_bf_test.cpp
+        src/Flat_bloom.h
+        src/Sbox_hash.cpp)
+
 add_test_program(open_hash_table_test
         test/Open_hash_table_test.cpp
         src/Open_hash_table.h)

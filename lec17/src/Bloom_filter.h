@@ -20,7 +20,7 @@ public:
     void insert(const std::string&);
 
     // Checks whether the string is in the filter. May return false positives.
-    bool check(const std::string&);
+    bool check(const std::string&) const;
 
 private:
     std::vector<Sbox_hash> functions_;

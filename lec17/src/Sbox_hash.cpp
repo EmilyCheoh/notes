@@ -1,17 +1,27 @@
 #include "Sbox_hash.h"
 
+#include <chrono>
 #include <random>
+
+using namespace std;
+
+static auto construct_randomness_engine()
+{
+    random_device rd;
+    auto time = static_cast<random_device::result_type>(
+            chrono::high_resolution_clock::now()
+                    .time_since_epoch().count());
+    return mt19937_64(rd() ^ time);
+}
 
 Sbox_hash::Sbox_hash()
 {
-    std::mt19937_64 rng;
-    rng.seed(std::random_device{}());
-    std::uniform_int_distribution<uint64_t> dist;
+    auto rng = construct_randomness_engine();
+    uniform_int_distribution<uint64_t> dist;
     for (auto& n : sbox_) n = dist(rng);
 }
 
-
-uint64_t Sbox_hash::operator()(std::string const& s) const
+uint64_t Sbox_hash::operator()(string const& s) const
 {
     uint64_t hash = 0;
 

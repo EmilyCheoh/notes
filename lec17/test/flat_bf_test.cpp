@@ -1,15 +1,17 @@
-#include "Bloom_filter.h"
+#include "Flat_bloom.h"
 #include <catch.h>
 
-TEST_CASE("Empty")
+size_t constexpr mebi = 1 << 20;
+
+TEST_CASE("empty, check")
 {
-    Bloom_filter filt(100, 3);
+    Flat_bloom<mebi> filt;
     CHECK_FALSE(filt.check("Hello, world"));
 }
 
-TEST_CASE("InsertCheck")
+TEST_CASE("insert, check")
 {
-    Bloom_filter filt(100, 3);
+    Flat_bloom<mebi, 20> filt;
 
     filt.insert("Hello, world");
     filt.insert("Hello, world.");
@@ -18,3 +20,4 @@ TEST_CASE("InsertCheck")
     CHECK(filt.check("Hello, world."));
     CHECK_FALSE(filt.check("hello, world."));
 }
+

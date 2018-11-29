@@ -1,188 +1,233 @@
 #pragma once
 
-#include <string>
+#include "Hash_table_base.h"
+
 #include <vector>
-#include <stdexcept>
 #include <iostream>
 
-// Thrown by Vec_hash<T>::lookup when the key isn't found.
-struct Not_found : std::logic_error
+// Thrown by Vec_hash<V>::add when the table is full
+struct Full : std::logic_error
 {
-    // Constructs a `Not_found` exception with the given key name.
-    explicit Not_found(std::string const& s)
-            : logic_error("Not found: " + s)
-    { }
-};
-
-// Thrown by Vec_hash<T>::add when the table is full
-class Full : public std::logic_error
-{
-public:
     Full() : logic_error("Table overflowed") {}
 };
 
-
 // A separate-chained hash table with std::strings for keys and type
-// parameter `T` for values.
-template<typename T>
-class Open_hash_table
+// parameter `V` for values.
+template<typename V>
+class Open_hash_table : public Hash_table_base<V>
 {
 public:
-    // The default number of buckets.
-    static const size_t default_nbuckets = 10000;
+    // When we inherit from a template, we have to specify what aspects of
+    // it we plan to use:
+    using Hash_table_base<V>::default_nbuckets;
+    using Hash_table_base<V>::start_index_;
 
     // Constructs a new hash table, optionally specifying the number of buckets.
     explicit Open_hash_table(size_t nbuckets = default_nbuckets);
 
-    // Inserts a key-value association into the hash table.
-    void insert(std::string const& key, T const& value);
-
-    // Returns a reference to the value associated with a given key. Throws
-    // `Not_found` if the key doesn't exist.
-    T& lookup(std::string const& key);
-
-    // Returns a reference to the value associated with a given key. Throws
-    // `Not_found` if the key doesn't exist.
-    T const& lookup(std::string const& key) const;
-
-    // Returns whether the given key is found in the hash table.
-    bool member(std::string const& key) const;
+    size_t nbuckets() const override;
+    void insert(std::string const& key, V const& value) override;
+    V& lookup(std::string const& key) override;
+    V const& lookup(std::string const& key) const override;
+    bool member(std::string const& key) const override;
+    void remove(std::string const& key) override;
 
     // Returns the number of key-value mappings.
     size_t size() const;
 
-    // Returns the number of buckets.
-    size_t nbuckets() const;
-
-    // Hashes a string to a 64-bit hash code.
-    //
-    // This function really should be protected, but we made it public for
-    // testing.
-    virtual size_t hash(std::string const& s) const;
-
-    virtual ~Open_hash_table() = default;
-
 private:
+    enum class status_t
+    {
+        used, unused, tombstone
+    };
+
     struct Entry
     {
         std::string key;
-        T           value;
-        bool        valid = false;
+        V           value;
+        status_t    status = status_t::unused;
     };
-    std::vector<Entry>   table_;
+
+    std::vector<Entry> table_;
+    size_t usage_;
     size_t size_;
 
-    // Hashes the given string and mods by the table size. This gives the
-    // index into the table.
-    size_t search_(std::string const& key) const;
+    // Searches for the index of a bucket with the given key, from the given
+    // starting position. Returns the index of the first unused bucket (or
+    // if `find_tombstone` is true, the first tombstone bucket).
+    size_t search_(size_t start, std::string const& key, bool find_tombstone) const;
 
     void double_capacity_();
 
-    void insert_no_double_(std::string const& key, T const& value);
+    void insert_no_double_(std::string const& key, V const& value);
 };
 
-template<typename T>
-size_t Open_hash_table<T>::hash(std::string const& s) const
-{
-    if (s.empty()) return 0;
-    else return (unsigned char) s[0];
-}
-
-template<typename T>
-Open_hash_table<T>::Open_hash_table(size_t nbuckets)
+template<typename V>
+Open_hash_table<V>::Open_hash_table(size_t nbuckets)
         : table_(nbuckets)
         , size_(0)
+        , usage_(0)
 { }
 
-template<typename T>
-void Open_hash_table<T>::double_capacity_()
+template<typename V>
+void Open_hash_table<V>::double_capacity_()
 {
     size_t new_size = table_.empty() ? 2 : 2 * table_.size();
     std::vector<Entry> table(new_size);
 
     std::swap(table_, table);
     size_ = 0;
+    usage_ = 0;
 
-    for (const Entry& p : table) {
-        if (p.valid)
+    for (Entry const& p : table) {
+        if (p.status == status_t::used)
             insert_no_double_(p.key, p.value);
     }
 }
 
-template<typename T>
-size_t Open_hash_table<T>::search_(std::string const& key) const
+template<typename V>
+size_t Open_hash_table<V>::search_(size_t start, std::string const& key, bool find_tombstone) const
 {
-    size_t start = hash(key) % table_.size();
-
     for (size_t offset = 0; offset < table_.size(); ++offset) {
         size_t index = (start + offset) % table_.size();
-        const Entry& p = table_[index];
+        Entry const& p = table_[index];
 
-        if (!p.valid || p.key == key) return index;
+        if (p.status == status_t::unused)
+            return index;
+
+        if (find_tombstone && p.status == status_t::tombstone)
+            return index;
+
+        if (p.status == status_t::used && p.key == key)
+            return index;
     }
 
     // Should never happen:
     throw Full();
 }
 
-template<typename T>
-void Open_hash_table<T>::insert_no_double_(std::string const& key,
-                                           T const& value)
+template<typename V>
+void Open_hash_table<V>::insert_no_double_(std::string const& key,
+                                           V const& value)
 {
-    size_t index = search_(key);
-    Entry& p = table_[index];
+    size_t first = search_(start_index_(key), key, true);
+    Entry& p = table_[first];
 
-    if (!p.valid) ++size_;
+    if (p.status == status_t::used) {
+        p.value = value;
+        return;
+    }
 
-    p.key   = key;
+    if (p.status == status_t::unused) {
+        p.key = key;
+        p.value = value;
+        p.status = status_t::used;
+        ++size_;
+        ++usage_;
+        return;
+    }
+
+    size_t second = search_(first, key, false);
+    Entry& q = table_[second];
+
+    if (q.status == status_t::used) {
+        q.value = value;
+        return;
+    }
+
+    p.key = key;
     p.value = value;
-    p.valid = true;
+    p.status = status_t::used;
+    ++size_;
 }
 
-
-template<typename T>
-void Open_hash_table<T>::insert(std::string const& key, T const& value)
+template<typename V>
+void Open_hash_table<V>::insert(std::string const& key, V const& value)
 {
     double load = table_.empty() ? 1 :
-                  static_cast<double>(size_) / table_.size();
+                  static_cast<double>(usage_) / table_.size();
     if (load > 0.5) double_capacity_();
 
     insert_no_double_(key, value);
 }
 
-template<typename T>
-T const& Open_hash_table<T>::lookup(std::string const& key) const
+template<typename V>
+V const& Open_hash_table<V>::lookup(std::string const& key) const
 {
-    const Entry& p = table_[search_(key)];
-    if (p.valid) return p.value;
+    Entry const& p = table_[search_(start_index_(key), key, false)];
+    if (p.status == status_t::used) return p.value;
     throw Not_found(key);
 }
 
 
-template<typename T>
-T& Open_hash_table<T>::lookup(std::string const& key)
+template<typename V>
+V& Open_hash_table<V>::lookup(std::string const& key)
 {
-    Entry& p = table_[search_(key)];
-    if (p.valid) return p.value;
+    Entry& p = table_[search_(start_index_(key), key, false)];
+    if (p.status == status_t::used) return p.value;
     throw Not_found(key);
 }
 
-template<typename T>
-bool Open_hash_table<T>::member(std::string const& key) const
+template<typename V>
+bool Open_hash_table<V>::member(std::string const& key) const
 {
-    const Entry& p = table_[search_(key)];
-    return p.valid;
+    Entry const& p = table_[search_(start_index_(key), key, false)];
+    return p.status == status_t::used;
 }
 
-template<typename T>
-size_t Open_hash_table<T>::size() const
+template<typename V>
+size_t Open_hash_table<V>::size() const
 {
     return size_;
 }
 
-template<typename T>
-size_t Open_hash_table<T>::nbuckets() const
+template<typename V>
+size_t Open_hash_table<V>::nbuckets() const
 {
     return table_.size();
 }
 
+template<typename V>
+void Open_hash_table<V>::remove(std::string const& key)
+{
+    size_t index = search_(start_index_(key), key, false);
+    Entry& p = table_[index];
+
+    if (p.status == status_t::used) {
+        p.key = "";
+        p.value = V();
+        p.status = status_t::tombstone;
+        --size_;
+    }
+}
+
+TEST_CASE("Remove")
+{
+    Open_hash_table<int> ht(100);
+    ht.insert("a1", 1);
+    ht.insert("a2", 2);
+    ht.insert("a3", 3);
+    CHECK(ht.member("a1"));
+    CHECK(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a2");
+    CHECK(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a1");
+    CHECK_FALSE(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a1");
+    CHECK_FALSE(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a3");
+    CHECK_FALSE(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK_FALSE(ht.member("a3"));
+}
