@@ -73,7 +73,7 @@ class Simple_mix_hash_table : public Chain_hash_table<T>
 public:
     explicit Simple_mix_hash_table
             (
-            size_t nbuckets = Chain_hash_table<T>::default_nbuckets,
+            size_t nbuckets = Hash_table_base<T>::default_nbuckets,
             uint64_t mixer = 3,
             uint64_t start = 0
             )
@@ -108,7 +108,7 @@ template<typename T>
 class Sbox_hash_table : public Chain_hash_table<T>
 {
 public:
-    explicit Sbox_hash_table(size_t nbuckets = Chain_hash_table<T>::default_nbuckets)
+    explicit Sbox_hash_table(size_t nbuckets = Hash_table_base<T>::default_nbuckets)
             : Chain_hash_table<T>(nbuckets)
     { }
 
