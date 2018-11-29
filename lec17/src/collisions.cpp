@@ -1,35 +1,36 @@
-#include "Vec_hash.h"
+#include "Chain_hash_table.h"
 #include "Various_hashes.h"
-#include "hamlet.h"
-
-void try_it(Vec_hash<size_t>& ht)
-{
-    for (std::string line : get_hamlet()) {
-        ht.add(line, 0);
-    }
-    ht.how_are_we_doing();
-}
+#include "hash_trial.h"
 
 int main()
 {
-    Vec_hash<size_t> h;
-    std::cout << "Vec_hash\n";
-    try_it(h);
-    std::cout << "\n";
+    {
+        Chain_hash_table<size_t> ht(10000);
+        hash_trial("First_char", ht);
+    }
 
-    Identity_hash<size_t> id;
-    std::cout << "Identity_hash\n";
-    try_it(id);
-    std::cout << "\n";
+    {
+        One_byte_hash_table<size_t> ht(10000);
+        hash_trial("One_byte", ht);
+    }
 
-    Simple_mix<size_t> sm;
-    std::cout << "Simple_mix\n";
-    try_it(sm);
-    std::cout << "\n";
+    {
+        Identity_hash_table<size_t> ht(10000);
+        hash_trial("Identity", ht);
+    }
 
-    Sbox_hash<size_t> sh;
-    std::cout << "Sbox_hash\n";
-    try_it(sh);
+    {
+        Eight_bytes_hash_table<size_t> ht(10000);
+        hash_trial("Eight_bytes", ht);
+    }
 
-    return 0;
+    {
+        Simple_mix_hash_table<size_t> ht(10000);
+        hash_trial("Simple_mix", ht);
+    }
+
+    {
+        Sbox_hash_table<size_t> ht(10000);
+        hash_trial("Sbox", ht);
+    }
 }

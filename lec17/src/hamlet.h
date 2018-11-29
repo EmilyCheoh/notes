@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 
-const std::vector<std::string>& get_hamlet();
+std::vector<std::string> const& get_hamlet();

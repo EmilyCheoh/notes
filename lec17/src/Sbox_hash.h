@@ -1,14 +1,17 @@
 #pragma once
 
 #include <array>
+#include <climits>
+#include <cstdint>
 #include <string>
 
 class Sbox_hash
 {
 public:
     Sbox_hash();
-    size_t operator()(const std::string&) const;
+    uint64_t operator()(std::string const&) const;
 
 private:
-    std::array<size_t, 256> sbox_;
+    static constexpr size_t size_ = 1 << CHAR_BIT;
+    std::array<uint64_t, size_> sbox_;
 };

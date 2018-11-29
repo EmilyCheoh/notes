@@ -1,80 +1,125 @@
 #pragma once
-#include "Vec_hash.h"
-#include <array>
-#include <random>
-#include <algorithm>
 
+#include "Chain_hash_table.h"
+#include "Sbox_hash.h"
 
 template<typename T>
-class Identity_hash : public Vec_hash<T>
+struct Identity_hash_table : Chain_hash_table<T>
 {
-public:
-    virtual size_t hash(const std::string& s) const override;
-
-    using Vec_hash<T>::Vec_hash;
+    using Chain_hash_table<T>::Chain_hash_table;
+    uint64_t hash(std::string const&) const override;
 };
 
 template<typename T>
-size_t Identity_hash<T>::hash(const std::string& s) const
+uint64_t Identity_hash_table<T>::hash(std::string const& s) const
 {
-    size_t      ret = 0;
-    for (size_t i   = 0; i < std::min(s.length(),(size_t)8); i++) {
-        ret |= ((size_t)(unsigned char) s[i]) << (i * 8);
+    uint64_t ret = 0;
+    size_t limit = std::min<size_t>(s.length(), 8);
+
+    for (size_t i = 0; i < limit; ++i) {
+        ret |= ((uint64_t)(unsigned char) s[i]) << (i * 8);
     }
+
     return ret;
 };
 
 
 template<typename T>
-class Simple_mix : public Vec_hash<T>
+struct One_byte_hash_table : Chain_hash_table<T>
 {
-public:
-    virtual size_t hash(const std::string& s) const override;
-
-    using Vec_hash<T>::Vec_hash;
+    using Chain_hash_table<T>::Chain_hash_table;
+    uint64_t hash(std::string const&) const override;
 };
 
 template<typename T>
-size_t Simple_mix<T>::hash(const std::string& s) const
+uint64_t One_byte_hash_table<T>::hash(std::string const& s) const
 {
-    size_t      ret = 0;
+    uint64_t ret = 0;
+
     for (char c : s) {
         ret ^= (unsigned char) c;
-        ret *= 15485863;
     }
+
     return ret;
 };
 
 template<typename T>
-class Sbox_hash : public Vec_hash<T>
+struct Eight_bytes_hash_table : Chain_hash_table<T>
 {
-public:
-    virtual size_t hash(const std::string& s) const override;
-
-    Sbox_hash(size_t = Vec_hash<T>::default_size);
-
-private:
-    std::array<size_t, 256> sbox_;
+    using Chain_hash_table<T>::Chain_hash_table;
+    uint64_t hash(std::string const& s) const override;
 };
 
 template<typename T>
-Sbox_hash<T>::Sbox_hash(size_t size) : Vec_hash<T>(size)
+uint64_t Eight_bytes_hash_table<T>::hash(std::string const& s) const
 {
-    std::mt19937_64 rng;
-    rng.seed(std::random_device{}());
-    std::uniform_int_distribution<size_t> dist;
-    for (auto& n : sbox_) n = dist(rng);
-}
+    uint64_t ret = 0;
+
+    size_t shift = 0;
+    size_t limit = s.size() / 8 * 8;
+
+    for (size_t i = 0; i < limit; ++i) {
+        ret ^= (uint64_t)(unsigned char)s[i] << (shift * 8);
+        shift = (shift + 1) % 8;
+    }
+
+    return ret;
+};
 
 
 template<typename T>
-size_t Sbox_hash<T>::hash(const std::string& s) const
+class Simple_mix_hash_table : public Chain_hash_table<T>
 {
-    size_t hash = 0;
+public:
+    explicit Simple_mix_hash_table
+            (
+            size_t nbuckets = Chain_hash_table<T>::default_nbuckets,
+            uint64_t mixer = 3,
+            uint64_t start = 0
+            )
+            :
+            Chain_hash_table<T>(nbuckets),
+            mixer_(mixer),
+            start_(start)
+    { }
+
+    uint64_t hash(std::string const& s) const override;
+
+private:
+    uint64_t mixer_;
+    uint64_t start_;
+};
+
+template<typename T>
+uint64_t Simple_mix_hash_table<T>::hash(std::string const& s) const
+{
+    uint64_t ret = start_;
+
     for (char c : s) {
-        hash ^= sbox_[c];
-        hash *= 3;
+        ret ^= (unsigned char) c;
+        ret *= mixer_;
     }
 
-    return hash;
+    return ret;
+};
+
+
+template<typename T>
+class Sbox_hash_table : public Chain_hash_table<T>
+{
+public:
+    explicit Sbox_hash_table(size_t nbuckets = Chain_hash_table<T>::default_nbuckets)
+            : Chain_hash_table<T>(nbuckets)
+    { }
+
+    uint64_t hash(std::string const& s) const override;
+
+private:
+    Sbox_hash hash_;
+};
+
+template<typename T>
+uint64_t Sbox_hash_table<T>::hash(std::string const& s) const
+{
+    return hash_(s);
 }

@@ -1,45 +1,64 @@
 # Hashing and Hash Tables
 
-A hash table provides a (non-persistent) version of the
-dictionary API:
+Suppose we want an ephemeral (non-persistent) dictionary whose keys are
+the first *n* natural numbers {0, 1, …, *n* - 1}. There's an easy, ready
+to go data structure for that:
 
 ```cpp
-  // hash<K,V> new()
-  // creates a new hash table that maps K to V
-
-  // void add(hash<K,V> hash, K key, V value)
-  // mutates `hash` so that it maps `key` to `value`
-
-  // bool member(hash<K,V> hash, K key)
-  // determines if `key` is in `hash`
-
-  // K lookup(hash<K,V> hash, K key)
-  // returns the value mapped by the key, raising
-  // an error if `key` is not mapped by the table
+std::vector<V> dict(n);
 ```
 
-The basic idea of the hash table implementation hinges on the ability
-to map the keys (`K`s) to natural numbers. We then use those natural
+But what if the keys aren't the first *n* natural numbers? What if they
+are strings, or positions, or more complicated things?
+
+A hash table implements an ephemeral (non-persistent) version of the
+dictionary API for any key type `K` that is *hashable*:
+
+```cpp
+// A dictionary mapping `K`s to `V`s.
+template <class K, class V>
+class Hash_table
+{
+public:
+    // Creates a new, empty hash table
+    Hash_table();
+
+    // Mutates `this` so that it maps `key` to `value`
+    void insert(K key, V value);
+
+    // Determines whether `key` is in `this`
+    bool member(K const& key) const;
+
+    // Returns a reference to the value mapped by `key`,
+    // or throws if `key` is absent.
+    V const& lookup(K const& key) const;
+    V& lookup(K const& key);
+
+    // …
+};
+```
+
+The basic idea of the hash table implementation hinges on the ability to
+map the keys (`K`s) to small natural numbers. We then use those natural
 numbers as indices into a vector and store key/value pairs in the
 vector.
 
-The mapping to natural numbers is called "hashing" and it will not
-always map every different object to a different natural number. That
-is, sometimes it will map two keys to the same number (this is called
-a "collision") and so each entry in the vector is going to itself
-contain a vector, which we will just scan to find the entry we want.
+The mapping to natural numbers is called *hashing* and it will not
+always map every different key to a different natural number. That is,
+sometimes it will map two different keys to the same number—this is
+called a ``collision''—and so each entry in the vector is going to need
+to contain multiple associations, which we search linearly.
 
 Hash tables generally behave differently at different sizes of the
-vector, so we'll make two constructors; one that uses a default size
-and one where we can specify the size of the vector
+underlying vector, so we'll make two constructors; one that uses a
+default size and one where we can specify the size of the vector:
 
 ```cpp
-  // hash<K,V> new(size_t size)
-  // creates a new hash table that maps K to V
-  // with an internal vector of size `size`
+    // Creates a new, empty hash table of the requested capacity
+    Hash_table(size_t capacity);
 
-  // hash<K,V> new()
-  // equivalent to new(10000)
+    // Equivalent to Hash_table(10000)
+    Hash_table();
 ```
 
 For the rest of this lecture, we'll assume that the keys are strings,
@@ -52,38 +71,38 @@ So, let's say that our hashing function maps every key to the value of
 its first letter in ASCII, and let's say that these calls happen:
 
 ```cpp
-   Hash<std::string,int> ht(4);
-   ht.add("aorta",0);
-   ht.add("bob",1);
-   ht.add("cost",2);
-   ht.add("dog",3);
+    Hash_table<std::string, int> ht(4);
+
+    ht.insert("aorta", 0);
+    ht.insert("bob", 1);
+    ht.insert("cost", 2);
+    ht.insert("dog", 3);
  ```
 
-Then we would get a vector like this (using `[,]` to notate the vectors
-and `<,>` to notate the key/value pairs):
+Then we would get a vector like this:
 
 ```c++
-  [[<"dog",3>],
-   [<"aorta",0>],
-   [<"bob",1>],
-   [<"cost",2>]]
+    {{Entry{"dog", 3}},
+     {Entry{"aorta", 0}},
+     {Entry{"bob", 1}},
+     {Entry{"cost", 2}}]
 ```
 
 But, if our hashing function instead used the second letter of the
 key, in ASCII, we would get this:
 
 ```c++
-  [[],
-   [],
-   [],
-   [<"dog",3>,<"cost",2>,<"bob",3">,<"aorta",4>]]
+    {{},
+     {},
+     {},
+     {Entry{"dog", 3}, Entry{"cost", 2}, Entry{"bob", 1}, Entry{"aorta", 0}}}
 ```
 
-Which one of these is better for `lookup`? (first!)
+Which one of these is better for `lookup`? (First!)
 
 Let's talk about the running time of the operations. Going in order:
 
-- `new()` -- linear (in the size of table)
+- constructor -- linear (in the number of buckets)
 
 - `lookup()` -- anywhere from constant to linear (in the number of
    elements in the table), depending how good the hashing function is
@@ -91,7 +110,7 @@ Let's talk about the running time of the operations. Going in order:
 
 - `member()` -- the same as `lookup()`
 
-- `add()` -- also the same as `lookup()`, since we need to scan the
+- `insert()` -- also the same as `lookup()`, since we need to scan the
   entire sequence that is in the bucket to see if we are replacing an
   existing mapping or not
 
@@ -99,25 +118,25 @@ Basically, the linear case is when all of the elements have
 the same hash code ("hashed to the same bucket") and the constant
 case is when they are all going into different buckets.
 
-Lets look at some code that implements the hashing functions,
-[`Vec_hash.h`](src/Vec_hash.h) and some code that we'll use as a
-client of the hash table, [`hamlet.cpp`](src/hamlet.cpp).
+Let's look at some code that implements the hashing functions,
+[`Chain_hash_table.h`](src/Chain_hash_table.h) and some code that we'll
+use as a client of the hash table, [`hamlet.cpp`](src/hamlet.cpp).
 
 ## How can we make a good hashing function?
 
-Okay, the `hash` function in that code is poor. Lets make a better
+Okay, the `hash` function in that code is poor. Let's make a better
 one. But first, we should try to figure out how well the hashing
 function is working so we know if we're improving things or not.
 
-Lets see if we can write some code to check to see which of the two
+Let's see if we can write some code to check to see which of the two
 situations we are in, above. How can we do that?
 
  ... <write some code>
 
-And lets write some new hashing functions that maybe do a bit
+And let's write some new hashing functions that maybe do a bit
 better. I've put a very bad hashing function in Various_hashes.h to
-show how we can swap out the hashing function for another one. Lets
-take a look. Lets make up a few more hashing functions to see if we
+show how we can swap out the hashing function for another one. Let's
+take a look. Let's make up a few more hashing functions to see if we
 can do better.
 
  ... <write some code>
@@ -160,11 +179,11 @@ care about for hash functions:
 ## Avalanche
 
 Avalanche is an interesting one to measure. Right now, we have hashing
-functions that produces 64 bits, but lets simplify that a little bit
+functions that produces 64 bits, but let's simplify that a little bit
 and look at some hashing functions that operate only on 4 bits and
-lets look at the "add1" function. This function is NOT one-way. But
+let's look at the "add1" function. This function is NOT one-way. But
 okay, on a 4 bit hashing function, a table lookup will go the other
-way so there aren't really any one way functions, so lets ignore that
+way so there aren't really any one way functions, so let's ignore that
 one for now. It is bijective, so the first point is satisfied. How
 about avalanche?
 
@@ -260,7 +279,7 @@ until things seem to settle down.
 
 The code in [`avalanche.rkt`](src/avalanche.rkt) repeatedly calls the
 code in [`avalanche.cpp`](src/avalanche.cpp) to compute this for the
-hash function listed in [`avalanche.cpp`](src/avalanche.cpp). Lets
+hash function listed in [`avalanche.cpp`](src/avalanche.cpp). Let's
 try a few of these out to see how well we are doing wrt to avalanche
 behavior.
 
@@ -342,7 +361,7 @@ hash to. If it is empty, we fill it. If it is full, we just start
 moving through the array until we find an empty spot and then use that
 spot.
 
-Lets code that up.
+Let's code that up.
 
 ## Inspiration for this lecture:
 

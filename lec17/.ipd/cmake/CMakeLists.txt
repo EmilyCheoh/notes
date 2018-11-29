@@ -14,7 +14,7 @@ function (add_program name)
     set_property(TARGET ${name} PROPERTY CXX_STANDARD_REQUIRED On)
 endfunction (add_program)
 
-# Adds a test program with the given name and source files
+# Adds a test-live program with the given name and source files
 function (add_test_program name)
     add_program(${name} ${ARGN})
     target_link_libraries(${name} catch)

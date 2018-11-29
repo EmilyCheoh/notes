@@ -1,4 +1,4 @@
-#include "Bloom_filter.h"
+#include "../src/Bloom_filter.h"
 #include <catch.h>
 
 TEST_CASE("Empty")
