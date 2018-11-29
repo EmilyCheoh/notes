@@ -80,6 +80,7 @@ V& Chain_hash_table<V>::lookup(std::string const& key)
 
     throw Not_found(key);
 }
+
 template<typename V>
 bool Chain_hash_table<V>::member(std::string const& key) const
 {
