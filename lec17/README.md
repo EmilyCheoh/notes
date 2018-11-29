@@ -6,9 +6,9 @@ Suppose we want an ephemeral (non-persistent) dictionary whose keys are
 the first *n* natural numbers {0, 1, …, *n* – 1}. There's an easy, ready
 to go data structure for that:
 
-```cpp
+“`cpp
 std::vector<V> dict(n);
-```
+“`
 
 But what if the keys aren't the first *n* natural numbers? What if they
 are strings, or positions, or more complicated things?
@@ -16,7 +16,7 @@ are strings, or positions, or more complicated things?
 A hash table implements an ephemeral (non-persistent) version of the
 dictionary API for any key type `K` that is *hashable*:
 
-```cpp
+“`cpp
 // A dictionary mapping `K`s to `V`s.
 template <class K, class V>
 class Hash_table
@@ -38,7 +38,7 @@ public:
 
     // …
 };
-```
+“`
 
 The basic idea of the hash table implementation hinges on the ability to
 map the keys (`K`s) to small natural numbers. We then use those natural
@@ -48,20 +48,20 @@ vector.
 The mapping to natural numbers is called *hashing* and it will not
 always map every different key to a different natural number. That is,
 sometimes it will map two different keys to the same number—this is
-called a ``collision''—and so each entry in the vector is going to need
+called a “collision”—and so each entry in the vector is going to need
 to contain multiple associations, which we search linearly.
 
 Hash tables generally behave differently at different sizes of the
 underlying vector, so we'll make two constructors; one that uses a
 default size and one where we can specify the size of the vector:
 
-```cpp
+“`cpp
     // Creates a new, empty hash table of the requested capacity
     Hash_table(size_t capacity);
 
     // Equivalent to Hash_table(10000)
     Hash_table();
-```
+“`
 
 For the rest of this lecture, we'll assume that the keys are strings,
 just to ease the discussion, but everything we can do will work for
@@ -72,33 +72,33 @@ the techniques discussed today.
 So, let's say that our hashing function maps every key to the value of
 its first letter in ASCII, and let's say that these calls happen:
 
-```cpp
+“`cpp
     Hash_table<std::string, int> ht(4);
 
     ht.insert("aorta", 0);
     ht.insert("bob", 1);
     ht.insert("cost", 2);
     ht.insert("dog", 3);
- ```
+ “`
 
 Then we would get a vector like this:
 
-```c++
+“`c++
     {{Entry{"dog", 3}},
      {Entry{"aorta", 0}},
      {Entry{"bob", 1}},
      {Entry{"cost", 2}}]
-```
+“`
 
 But, if our hashing function instead used the second letter of the
 key, in ASCII, we would get this:
 
-```c++
+“`c++
     {{},
      {},
      {},
      {Entry{"dog", 3}, Entry{"cost", 2}, Entry{"bob", 1}, Entry{"aorta", 0}}}
-```
+“`
 
 Which one of these is better for `lookup`? (First!)
 
@@ -157,7 +157,7 @@ care about for hash functions:
 - **uniform distribution**: two different inputs should map to two
   different outputs. Of course, this isn't possible if the number of
   inputs is larger than the number of outputs, but we want to minimize
-  collisions, so we want to avoid ``bunching up''. In other words, we
+  collisions, so we want to avoid “bunching up”. In other words, we
   want to make sure that all of the outputs are equally likely to be
   used.
 
@@ -183,7 +183,7 @@ care about for hash functions:
 Avalanche is an interesting one to measure. Right now, we have hash
 functions that produces 64 bits, but let's simplify that a little bit
 and look at some hash functions that operate only on 4 bits and
-let's look at the ``add1'' function. This function is NOT one-way. But
+let's look at the “add1” function. This function is NOT one-way. But
 okay, on a 4 bit hash function, a table lookup will go the other
 way so there aren't really any one way functions, so let's ignore that
 one for now. It is bijective, so the first point is satisfied. How
@@ -196,7 +196,7 @@ most part, be half of the available bits.
 Here is the add1-mod-16 function, written out on the binary
 representation of four-bit numbers:
 
-```c++
+“`c++
 0000  -->  0001
 0001  -->  0010
 0010  -->  0011
@@ -213,19 +213,19 @@ representation of four-bit numbers:
 1101  -->  1110
 1110  -->  1111
 1111  -->  0000
-```
+“`
 
 and we can build a table that tells us, for each bit we might flip in
 the input, how many times does an output bit flip?
 
-```c++
+“`c++
      output flip:  0   1   2   3
 input flip:
  0                 8   8   4   2
  1                 0   8   4   2
  2                 0   0   8   2
  3                 0   0   0   8
-```
+“`
 
 What we want here is to get 4s everywhere. This is far from that, so
 we would say that this function is not very good on the avalanche
@@ -234,7 +234,7 @@ criterion.
 Here's another function (that I cannot describe easily, except by
 writing it down):
 
-```c++
+“`c++
 0000 -> 1111
 0001 -> 1010
 0010 -> 0000
@@ -251,18 +251,18 @@ writing it down):
 1101 -> 0101
 1110 -> 0110
 1111 -> 0001
-```
+“`
 
 This one achieves perfect avalanche:
 
-```c++
+“`c++
      output flip:  0   1   2   3
 input flip:
  0                 4   4   4   4
  1                 4   4   4   4
  2                 4   4   4   4
  3                 4   4   4   4
-```
+“`
 
 When we want to measure avalanche for functions on larger numbers of
 bits, it is not really feasible to build these tables. For N bits, we
@@ -286,15 +286,15 @@ try a few of these out to see how well we are doing wrt to avalanche
 behavior.
 
 One way to get good avalanche behavior is to make a random permutation
-of bytes and then use that in the hash function. That is, we can ``mix
-up'' the bits that come into our function by passing it through a
+of bytes and then use that in the hash function. That is, we can “mix
+up” the bits that come into our function by passing it through a
 random byte-to-byte bijection. Because it is a bijection, we will not
 compromise the other properties of the hash function and because it is
-random, we will get good ``mixing'' of the bits. See `src/Sbox_hash.h` and
+random, we will get good “mixing” of the bits. See `src/Sbox_hash.h` and
 `src/Sbox_hash.cpp` for code that does that.
 
-```cpp
-```
+“`cpp
+“`
 
 ### Denial of service implications
 
