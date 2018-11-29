@@ -38,6 +38,9 @@ public:
     // Removed `key`'s association, if present.
     virtual void remove(std::string const& key) = 0;
 
+    // Diagnostic function for measuring the number of collisions.
+    virtual size_t collisions() const = 0;
+
 protected:
     // Hashes the given string and mods by the table size. This gives the
     // index into the table.

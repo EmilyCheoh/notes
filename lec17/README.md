@@ -149,7 +149,7 @@ function), a function that mixes up the internal state, and a function
 that pulls in a chunk of the data being processed and combines it with
 the internal state.
 
- - See `Simple_mix_hash_table` in `Various_hashes.h`, and `collisions2.cpp`
+ - See `Simple_mix_hash_table` in `Various_hashes.h`, and `mixers.cpp`
 
 Stepping back, there are three properties of hash functions that we
 care about for hash functions:

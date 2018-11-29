@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Chain_hash_table.h"
+#include "Hash_table_base.h"
 #include <string>
 
-void hash_trial(std::string const& name, Chain_hash_table<size_t>& h);
+void hash_trial(std::string const& name, Hash_table_base<size_t>& h);

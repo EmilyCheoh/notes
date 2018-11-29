@@ -26,9 +26,7 @@ public:
     V const& lookup(std::string const& key) const override;
     bool member(std::string const& key) const override;
     void remove(std::string const& key) override;
-
-    // Diagnostic function for measuring the number of collisions.
-    size_t collisions() const;
+    size_t collisions() const override;
 
     // Tell us about the collisions in the hash table
     void print_stats() const;

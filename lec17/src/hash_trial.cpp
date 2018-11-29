@@ -2,8 +2,9 @@
 #include "hamlet.h"
 
 #include <iomanip>
+#include <iostream>
 
-void hash_trial(std::string const& name, Chain_hash_table<size_t>& h)
+void hash_trial(std::string const& name, Hash_table_base<size_t>& h)
 {
     size_t i = 0;
 

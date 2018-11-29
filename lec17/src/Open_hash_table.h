@@ -31,6 +31,7 @@ public:
     V const& lookup(std::string const& key) const override;
     bool member(std::string const& key) const override;
     void remove(std::string const& key) override;
+    size_t collisions() const override;
 
     // Returns the number of key-value mappings.
     size_t size() const;
@@ -201,3 +202,17 @@ void Open_hash_table<V>::remove(std::string const& key)
     }
 }
 
+template<typename V>
+size_t Open_hash_table<V>::collisions() const
+{
+    size_t result = 0;
+
+    for (size_t i = 0; i < table_.size(); ++i) {
+        Entry const& entry = table_[i];
+        if (entry.status == status_t::used &&
+                start_index_(entry.key) != i)
+            ++result;
+    }
+
+    return result;
+}

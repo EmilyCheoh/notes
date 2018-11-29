@@ -1,4 +1,5 @@
 #include "Chain_hash_table.h"
+#include "Open_hash_table.h"
 #include "Various_hashes.h"
 #include "hash_trial.h"
 
@@ -33,4 +34,10 @@ int main()
         Sbox_hash_table<size_t> ht(10000);
         hash_trial("Sbox", ht);
     }
+
+    {
+        Open_hash_table<size_t> ht(10000);
+        hash_trial("Open", ht);
+    }
 }
+
