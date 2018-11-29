@@ -23,7 +23,8 @@ public:
     bool check(const std::string&);
 
 private:
-    size_t nbits_;
     std::vector<Sbox_hash> functions_;
     std::vector<bool> bits_;
+
+    size_t nbits_() const { return bits_.size(); };
 };
