@@ -1,7 +1,9 @@
 # Hashing and Hash Tables
 
+## Separate chaining hash table
+
 Suppose we want an ephemeral (non-persistent) dictionary whose keys are
-the first *n* natural numbers {0, 1, …, *n* - 1}. There's an easy, ready
+the first *n* natural numbers {0, 1, …, *n* – 1}. There's an easy, ready
 to go data structure for that:
 
 ```cpp
@@ -105,7 +107,7 @@ Let's talk about the running time of the operations. Going in order:
 - constructor -- linear (in the number of buckets)
 
 - `lookup()` -- anywhere from constant to linear (in the number of
-   elements in the table), depending how good the hashing function is
+   elements in the table), depending how good the hash function is
    and how big the table is
 
 - `member()` -- the same as `lookup()`
@@ -118,28 +120,28 @@ Basically, the linear case is when all of the elements have
 the same hash code ("hashed to the same bucket") and the constant
 case is when they are all going into different buckets.
 
-Let's look at some code that implements the hashing functions,
-[`Chain_hash_table.h`](src/Chain_hash_table.h) and some code that we'll
+Let's look at some code that implements the hash functions,
+[`Hash_table_base.h`](src/Hash_table_base.h) and some code that we'll
 use as a client of the hash table, [`hamlet.cpp`](src/hamlet.cpp).
 
-## How can we make a good hashing function?
+## How can we make a good hash function?
 
 Okay, the `hash` function in that code is poor. Let's make a better
-one. But first, we should try to figure out how well the hashing
+one. But first, we should try to figure out how well the hash
 function is working so we know if we're improving things or not.
 
 Let's see if we can write some code to check to see which of the two
 situations we are in, above. How can we do that?
 
- ... <write some code>
+ - See `collisions.cpp`
 
-And let's write some new hashing functions that maybe do a bit
-better. I've put a very bad hashing function in Various_hashes.h to
-show how we can swap out the hashing function for another one. Let's
-take a look. Let's make up a few more hashing functions to see if we
+And let's write some new hash functions that maybe do a bit
+better. I've put a very bad hash function in `Various_hashes.h` to
+show how we can swap out the hash function for another one. Let's
+take a look. Let's make up a few more hash functions to see if we
 can do better.
 
- ... <write some code>
+ - See `Various_hashes.h`
 
 Hashing functions generally consist of three conceptual pieces: some
 internal state (that is generally the size of the result of the hash
@@ -147,7 +149,7 @@ function), a function that mixes up the internal state, and a function
 that pulls in a chunk of the data being processed and combines it with
 the internal state.
 
- ... <write some code>
+ - See `Simple_mix_hash_table` in `Various_hashes.h`, and `collisions2.cpp`
 
 Stepping back, there are three properties of hash functions that we
 care about for hash functions:
@@ -155,11 +157,11 @@ care about for hash functions:
 - **uniform distribution**: two different inputs should map to two
   different outputs. Of course, this isn't possible if the number of
   inputs is larger than the number of outputs, but we want to minimize
-  collisions, so we want to avoid "bunching up". In other words, we
+  collisions, so we want to avoid ``bunching up''. In other words, we
   want to make sure that all of the outputs are equally likely to be
   used.
 
-- **one way**: hashing functions are used for hash tables, but also for
+- **one way**: hash functions are used for hash tables, but also for
   other purposes that are security sensitive. In those cases, it is
   important that we cannot easily go from a hashed value to an input
   to the hash function. For example, passwords are not stored; instead
@@ -169,25 +171,25 @@ care about for hash functions:
   This property is also important for security in hash tables; we'll
   return to it later in the lecture.
 
-- **avalance**: we want inputs that are only a little bit different to
+- **avalanche**: we want inputs that are only a little bit different to
   hash to completely different outputs. The issue here is that the
   keys in any given hash table are usually not very random (think of a
   hash table that stores URLs or stores English text, etc) and so we
   want little changes in the input to correspond to large changes in
   the output.
 
-## Avalanche
+### Avalanche
 
-Avalanche is an interesting one to measure. Right now, we have hashing
+Avalanche is an interesting one to measure. Right now, we have hash
 functions that produces 64 bits, but let's simplify that a little bit
-and look at some hashing functions that operate only on 4 bits and
-let's look at the "add1" function. This function is NOT one-way. But
-okay, on a 4 bit hashing function, a table lookup will go the other
+and look at some hash functions that operate only on 4 bits and
+let's look at the ``add1'' function. This function is NOT one-way. But
+okay, on a 4 bit hash function, a table lookup will go the other
 way so there aren't really any one way functions, so let's ignore that
 one for now. It is bijective, so the first point is satisfied. How
 about avalanche?
 
-The way we measure avalance is to say: if I perturb one bit of the
+The way we measure avalanche is to say: If I perturb one bit of the
 input, how many bits flip in the output? As we want that to, for the
 most part, be half of the available bits. 
 
@@ -264,11 +266,11 @@ input flip:
 
 When we want to measure avalanche for functions on larger numbers of
 bits, it is not really feasible to build these tables. For N bits, we
-have an N^2 matrix and each entry in the matrix requires O(2^(N))
+have an *N*^2 matrix and each entry in the matrix requires *O*(2^*N*)
 calls to the hash function, plus the work to check and see which bits
 flipped. There may be a more efficient way to compute the matrix, but
 fundamentally it requires us to compare each result of the hash
-function with 2^(N-1) other results, so that's going to take a long
+function with 2^(*N*-1) other results, so that's going to take a long
 time.
 
 Instead, what we can do is randomly pick a bit string and then compute
@@ -284,84 +286,35 @@ try a few of these out to see how well we are doing wrt to avalanche
 behavior.
 
 One way to get good avalanche behavior is to make a random permutation
-of bytes and then use that in the hash function. That is, we can "mix
-up" the bits that come into our function by passing it through a
+of bytes and then use that in the hash function. That is, we can ``mix
+up'' the bits that come into our function by passing it through a
 random byte-to-byte bijection. Because it is a bijection, we will not
 compromise the other properties of the hash function and because it is
-random, we will get good "mixing" of the bits. Here's some code that
-does that.
+random, we will get good ``mixing'' of the bits. See `src/Sbox_hash.h` and 
+`src/Sbox_hash.cpp` for code that does that.
 
 ```cpp
-
-#include <random>
-
-template<typename T>
-class Sbox_hash : public Vec_hash<T>
-{
-public:
-    virtual size_t hash(const std::string& s) const override;
-
-    Sbox_hash(size_t = Vec_hash<T>::default_size);
-
-private:
-    // add a private field that stores
-    // the bijection as a lookup table
-    std::array<size_t, 256> sbox_;
-};
-
-template<typename T>
-Sbox_hash<T>::Sbox_hash(size_t size) : Vec_hash<T>(size)
-{
-    std::mt19937_64 rng;
-    rng.seed(std::random_device{}());
-    std::uniform_int_distribution<size_t> dist;
-    for (auto& n : sbox_) n = dist(rng);
-}
-
-
-template<typename T>
-size_t Sbox_hash<T>::hash(const std::string& s) const
-{
-    size_t hash = 0;
-
-    for (size_t i = 0; i < s.length(); ++i) {
-        hash ^= sbox_[(unsigned char)s[i]];
-        hash *= 3;
-    }
-
-    return hash;
-}
 ```
 
-## Denial of service implications
+### Denial of service implications
 
-Webservices will store parts of the input they get from the web in
+Web services will store parts of the input they get from the web in
 they are given in hash tables. Even if you, as the web services
 provider, doesn't ask for it to be saved. So, an attacker can supply
 an input to the web server that causes it to fill up just a single
 bucket in the hash and now every operation with the hash requires the
 linear scan and this can, with one request to the webserver, keep the
-cpu pegged for 40 minutes(!).
+CPU pegged for 40 minutes(!).
 
 https://events.ccc.de/congress/2011/Fahrplan/attachments/2007_28C3_Effective_DoS_on_web_application_platforms.pdf
 
 https://www.youtube.com/watch?v=R2Cq3CLI6H8
 
-##  Other hash functions in the literature:
+###  Other hash functions in the literature:
 
 - [CityHash](https://github.com/google/cityhash)
 - [SipHash](https://131002.net/siphash/siphash.pdf)
 - [SpookyHash](http://www.burtleburtle.net/bob/hash/spooky.html)
-
-## Open addressing
-
-Instead of using chaining, we can keep only a std::vector<Entry>. The
-basic idea is to find the position in the arry where the value would
-hash to. If it is empty, we fill it. If it is full, we just start
-moving through the array until we find an empty spot and then use that
-spot.
-
-Let's code that up.
 
 ## Inspiration for this lecture:
 
@@ -424,7 +377,7 @@ definitely isn’t in the set.
 Note that we can’t remove elements because multiple elements may share some 
 same bits.
 
-## The code
+### The code
 
 The interface for a Bloom filter is in `src/Bloom_filter.h`. To construct a 
 Bloom filter, we give the constructor the number of bits and the number of 
@@ -445,7 +398,7 @@ We represent the Bloom filter using a `std::vector<bool>` for the bits and a
   isn’t set then it returns `false`. If all the checked bits are set then it
   returns `true`.
 
-## The math
+### The math
 
 How likely are false positives when using multiple hash functions? Consider:
 
@@ -472,4 +425,14 @@ The optimal number of hash functions k = (m/n) ln 2. In that case, then using
 4.8 bits per entry gets us a false positive rate of 10%, 9.6 bits per entry 
 gets us a false positive rate of 1%, and so on for every additional 4.8 bits 
 per entry eliminates 90% of the remaining false positives.
+
+## Open addressing hash table
+
+Instead of using chaining, we can keep only a std::vector<Entry>. The
+basic idea is to find the position in the arry where the value would
+hash to. If it is empty, we fill it. If it is full, we just start
+moving through the array until we find an empty spot and then use that
+spot.
+
+Let's code that up.
 
