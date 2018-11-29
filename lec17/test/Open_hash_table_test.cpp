@@ -1,5 +1,5 @@
-#include <catch.h>
 #include "Open_hash_table.h"
+#include <catch.h>
 
 TEST_CASE("lookup() const")
 {
@@ -83,4 +83,35 @@ TEST_CASE("lookup throws")
     vh.insert("abc", 1);
     CHECK(vh.lookup("abc") == 1);
     CHECK_THROWS_AS(vh.lookup("def"), Not_found);
+}
+
+TEST_CASE("Remove")
+{
+    Open_hash_table<int> ht(100);
+    ht.insert("a1", 1);
+    ht.insert("a2", 2);
+    ht.insert("a3", 3);
+    CHECK(ht.member("a1"));
+    CHECK(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a2");
+    CHECK(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a1");
+    CHECK_FALSE(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a1");
+    CHECK_FALSE(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK(ht.member("a3"));
+
+    ht.remove("a3");
+    CHECK_FALSE(ht.member("a1"));
+    CHECK_FALSE(ht.member("a2"));
+    CHECK_FALSE(ht.member("a3"));
 }

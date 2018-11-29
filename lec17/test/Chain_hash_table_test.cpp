@@ -1,4 +1,5 @@
 #include "Chain_hash_table.h"
+#include "Various_hashes.h"
 #include <catch.h>
 
 TEST_CASE("HASH1")

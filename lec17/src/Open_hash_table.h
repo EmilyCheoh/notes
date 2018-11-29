@@ -201,33 +201,3 @@ void Open_hash_table<V>::remove(std::string const& key)
     }
 }
 
-TEST_CASE("Remove")
-{
-    Open_hash_table<int> ht(100);
-    ht.insert("a1", 1);
-    ht.insert("a2", 2);
-    ht.insert("a3", 3);
-    CHECK(ht.member("a1"));
-    CHECK(ht.member("a2"));
-    CHECK(ht.member("a3"));
-
-    ht.remove("a2");
-    CHECK(ht.member("a1"));
-    CHECK_FALSE(ht.member("a2"));
-    CHECK(ht.member("a3"));
-
-    ht.remove("a1");
-    CHECK_FALSE(ht.member("a1"));
-    CHECK_FALSE(ht.member("a2"));
-    CHECK(ht.member("a3"));
-
-    ht.remove("a1");
-    CHECK_FALSE(ht.member("a1"));
-    CHECK_FALSE(ht.member("a2"));
-    CHECK(ht.member("a3"));
-
-    ht.remove("a3");
-    CHECK_FALSE(ht.member("a1"));
-    CHECK_FALSE(ht.member("a2"));
-    CHECK_FALSE(ht.member("a3"));
-}

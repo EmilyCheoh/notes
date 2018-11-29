@@ -47,7 +47,7 @@
 (define (inc-s! n m) (set-s! n m (+ 1 (get-s n m))))
 
 (define trials 0)
-(define (avalance-trial)
+(define (avalanche-trial)
   (set! trials (+ trials 1))
   (define random-bytes (apply
                         bytes
@@ -127,7 +127,7 @@
         (λ ()
           (cond
             [(send frame is-shown?)
-             (avalance-trial)
+             (avalanche-trial)
              (send canvas refresh)]
             [else (send timer stop)]))]
        [interval 500]))

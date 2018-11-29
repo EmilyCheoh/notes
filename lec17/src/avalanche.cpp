@@ -6,7 +6,9 @@
 size_t constexpr bytes_to_hash = 8;
 size_t constexpr bits_to_hash  = bytes_to_hash * CHAR_BIT;
 
-using Hash_table = Sbox_hash_table<size_t>;
+//using Hash_table = Simple_mix_hash_table<size_t>;
+//using Hash_table = Chain_hash_table<size_t>;
+using Hash_table = Identity_hash_table<size_t>;
 
 int main()
 {
