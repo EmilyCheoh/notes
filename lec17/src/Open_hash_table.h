@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-// Thrown by Vec_hash<V>::add when the table is full
+// Thrown by insert when the table is full
 struct Full : std::logic_error
 {
     Full() : logic_error("Table overflowed") {}

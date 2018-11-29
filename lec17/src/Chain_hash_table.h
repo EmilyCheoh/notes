@@ -49,16 +49,16 @@ Chain_hash_table<V>::Chain_hash_table(size_t nbuckets)
 template<typename V>
 void Chain_hash_table<V>::insert(std::string const& key, V const& value)
 {
-    size_t hash_code = start_index_(key);
+    size_t index = start_index_(key);
 
-    for (Entry& p : table_[hash_code]) {
+    for (Entry& p : table_[index]) {
         if (p.key == key) {
             p.value = value;
             return;
         }
     }
 
-    table_[hash_code].push_front({key, value});
+    table_[index].push_front({key, value});
 }
 
 
