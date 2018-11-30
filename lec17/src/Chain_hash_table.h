@@ -21,7 +21,7 @@ public:
     explicit Chain_hash_table(size_t nbuckets = default_nbuckets);
 
     size_t nbuckets() const override;
-    void insert(std::string const& key, V const& value) override;
+    void insert(std::string&& key, V&& value) override;
     V& lookup(std::string const& key) override;
     V const& lookup(std::string const& key) const override;
     bool member(std::string const& key) const override;
@@ -36,6 +36,11 @@ private:
     {
         std::string key;
         V value;
+
+        Entry(std::string&& k, V&& v)
+                : key(std::move(k))
+                , value(std::move(v))
+        { }
     };
 
     std::vector<std::list<Entry>> table_;
@@ -47,18 +52,18 @@ Chain_hash_table<V>::Chain_hash_table(size_t nbuckets)
 { }
 
 template<typename V>
-void Chain_hash_table<V>::insert(std::string const& key, V const& value)
+void Chain_hash_table<V>::insert(std::string&& key, V&& value)
 {
     size_t index = start_index_(key);
 
     for (Entry& p : table_[index]) {
         if (p.key == key) {
-            p.value = value;
+            p.value = std::move(value);
             return;
         }
     }
 
-    table_[index].push_front({key, value});
+    table_[index].emplace_front(std::move(key), std::move(value));
 }
 
 

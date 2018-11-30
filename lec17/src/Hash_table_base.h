@@ -36,7 +36,8 @@ public:
     virtual size_t nbuckets() const = 0;
 
     // Inserts a key-value association into the hash table.
-    virtual void insert(std::string const& key, V const& value) = 0;
+    virtual void insert(std::string&& key, V&& value) = 0;
+    void insert(std::string const& key, V const& value);
 
     // Returns a reference to the value associated with a given key. Throws
     // `Not_found` if the key doesn't exist.
@@ -72,5 +73,11 @@ template<typename V>
 size_t Hash_table_base<V>::start_index_(std::string const& key) const
 {
     return size_t(hash(key)) % nbuckets();
+}
+
+template<typename V>
+void Hash_table_base<V>::insert(std::string const& key, const V& value)
+{
+    insert(std::string(key), V(value));
 }
 

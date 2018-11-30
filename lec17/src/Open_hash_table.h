@@ -26,7 +26,7 @@ public:
     explicit Open_hash_table(size_t nbuckets = default_nbuckets);
 
     size_t nbuckets() const override;
-    void insert(std::string const& key, V const& value) override;
+    void insert(std::string&& key, V&& value) override;
     V& lookup(std::string const& key) override;
     V const& lookup(std::string const& key) const override;
     bool member(std::string const& key) const override;
@@ -47,6 +47,11 @@ private:
         std::string key;
         V           value;
         status_t    status = status_t::unused;
+
+        bool is_used() const { return status == status_t::used; }
+        bool is_unused() const { return status == status_t::unused; }
+        bool is_removed() const { return status == status_t::tombstone; }
+        bool has_key(std::string const& k) const { return is_used() && k == key; }
     };
 
     std::vector<Entry> table_;
@@ -55,12 +60,14 @@ private:
 
     // Searches for the index of a bucket with the given key, from the given
     // starting position. Returns the index of the first unused bucket (or
-    // if `find_tombstone` is true, the first tombstone bucket).
-    size_t search_(size_t start, std::string const& key, bool find_tombstone) const;
+    // if `allow_tombstone` is true, the first tombstone bucket).
+    size_t search_(size_t start,
+                   std::string const& key,
+                   bool allow_tombstone = false) const;
 
     void double_capacity_();
 
-    void insert_no_double_(std::string const& key, V const& value);
+    void insert_no_double_(std::string&& key, V&& value);
 };
 
 template<typename V>
@@ -80,27 +87,28 @@ void Open_hash_table<V>::double_capacity_()
     size_ = 0;
     usage_ = 0;
 
-    for (Entry const& p : table) {
-        if (p.status == status_t::used)
-            insert_no_double_(p.key, p.value);
-    }
+    for (Entry& e : table)
+        if (e.is_used())
+            insert_no_double_(std::move(e.key), std::move(e.value));
 }
 
 template<typename V>
-size_t Open_hash_table<V>::search_(size_t start, std::string const& key, bool find_tombstone) const
+size_t Open_hash_table<V>::search_(size_t start,
+                                   std::string const& key,
+                                   bool allow_tombstone) const
 {
-    for (size_t offset = 0; offset < table_.size(); ++offset) {
-        size_t index = (start + offset) % table_.size();
-        Entry const& p = table_[index];
+    size_t index = start;
+    size_t limit = table_.size();
 
-        if (p.status == status_t::unused)
+    for (size_t offset = 0; offset < limit; ++offset) {
+        Entry const& e = table_[index];
+
+        if (e.is_unused() ||
+                e.has_key(key) ||
+                (allow_tombstone && e.is_removed()))
             return index;
 
-        if (find_tombstone && p.status == status_t::tombstone)
-            return index;
-
-        if (p.status == status_t::used && p.key == key)
-            return index;
+        index = (index + 1) % limit;
     }
 
     // Should never happen:
@@ -108,55 +116,55 @@ size_t Open_hash_table<V>::search_(size_t start, std::string const& key, bool fi
 }
 
 template<typename V>
-void Open_hash_table<V>::insert_no_double_(std::string const& key,
-                                           V const& value)
+void Open_hash_table<V>::insert_no_double_(std::string&& key,
+                                           V&& value)
 {
     size_t first = search_(start_index_(key), key, true);
-    Entry& p = table_[first];
+    Entry& e1 = table_[first];
 
-    if (p.status == status_t::used) {
-        p.value = value;
+    if (e1.is_used()) {
+        e1.value = std::move(value);
         return;
     }
 
-    if (p.status == status_t::unused) {
-        p.key = key;
-        p.value = value;
-        p.status = status_t::used;
+    if (e1.is_unused()) {
+        e1.key = std::move(key);
+        e1.value = std::move(value);
+        e1.status = status_t::used;
         ++size_;
         ++usage_;
         return;
     }
 
-    size_t second = search_(first, key, false);
-    Entry& q = table_[second];
+    size_t second = search_(first, key);
+    Entry& e2 = table_[second];
 
-    if (q.status == status_t::used) {
-        q.value = value;
+    if (e2.is_used()) {
+        e2.value = std::move(value);
         return;
     }
 
-    p.key = key;
-    p.value = value;
-    p.status = status_t::used;
+    e1.key = std::move(key);
+    e1.value = std::move(value);
+    e1.status = status_t::used;
     ++size_;
 }
 
 template<typename V>
-void Open_hash_table<V>::insert(std::string const& key, V const& value)
+void Open_hash_table<V>::insert(std::string&& key, V&& value)
 {
     double load = table_.empty() ? 1 :
                   static_cast<double>(usage_) / table_.size();
     if (load > 0.5) double_capacity_();
 
-    insert_no_double_(key, value);
+    insert_no_double_(std::move(key), std::move(value));
 }
 
 template<typename V>
 V const& Open_hash_table<V>::lookup(std::string const& key) const
 {
-    Entry const& p = table_[search_(start_index_(key), key, false)];
-    if (p.status == status_t::used) return p.value;
+    Entry const& e = table_[search_(start_index_(key), key)];
+    if (e.is_used()) return e.value;
     throw Not_found(key);
 }
 
@@ -164,16 +172,15 @@ V const& Open_hash_table<V>::lookup(std::string const& key) const
 template<typename V>
 V& Open_hash_table<V>::lookup(std::string const& key)
 {
-    Entry& p = table_[search_(start_index_(key), key, false)];
-    if (p.status == status_t::used) return p.value;
+    Entry& e = table_[search_(start_index_(key), key)];
+    if (e.is_used()) return e.value;
     throw Not_found(key);
 }
 
 template<typename V>
 bool Open_hash_table<V>::member(std::string const& key) const
 {
-    Entry const& p = table_[search_(start_index_(key), key, false)];
-    return p.status == status_t::used;
+    return table_[search_(start_index_(key), key)].is_used();
 }
 
 template<typename V>
@@ -191,13 +198,13 @@ size_t Open_hash_table<V>::nbuckets() const
 template<typename V>
 void Open_hash_table<V>::remove(std::string const& key)
 {
-    size_t index = search_(start_index_(key), key, false);
-    Entry& p = table_[index];
+    size_t index = search_(start_index_(key), key);
+    Entry& e = table_[index];
 
-    if (p.status == status_t::used) {
-        p.key = "";
-        p.value = V();
-        p.status = status_t::tombstone;
+    if (e.is_used()) {
+        e.key.clear();
+        e.value = V();
+        e.status = status_t::tombstone;
         --size_;
     }
 }
@@ -209,10 +216,10 @@ size_t Open_hash_table<V>::collisions() const
 
     for (size_t i = 0; i < table_.size(); ++i) {
         Entry const& entry = table_[i];
-        if (entry.status == status_t::used &&
-                start_index_(entry.key) != i)
+        if (entry.is_used() && start_index_(entry.key) != i)
             ++result;
     }
 
     return result;
 }
+
