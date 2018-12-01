@@ -37,4 +37,7 @@ add_test_program(flat_bf_test
 add_test_program(open_hash_table_test
         test/Open_hash_table_test.cpp)
 
+add_test_program(Tagged_optional_test
+        test/Tagged_optional_test.cpp
+        src/Tagged_optional.h)
 
