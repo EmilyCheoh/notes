@@ -18,7 +18,7 @@ class Bst
 {
 public:
     // Constructs an empty tree.
-    Bst();
+    Bst() = default;
     // Constructs a tree containing the given elements.
     Bst(std::initializer_list<T>);
 
@@ -34,6 +34,9 @@ public:
     // Removes an element from the tree, if present.
     void remove(const T&);
 
+    // Move-based insert:
+    void insert(T&&);
+
     bool bst_invariant_holds() const;
 
 private:
@@ -41,47 +44,54 @@ private:
     using link_ = std::unique_ptr<node_>;
 
     struct node_ {
-        node_(const T& value)
-                : data(value), left(nullptr), right(nullptr)
-        { }
-
         T     data;
         link_ left;
         link_ right;
+
+        node_(T const& value)
+                : data(value), left(nullptr), right(nullptr)
+        { }
+
+        // moves value into node:
+        node_(T&& value)
+                : data(std::move(value)), left(nullptr), right(nullptr)
+        { }
     };
 
     link_  root_;
-    size_t size_;
+    size_t size_{ 0 };
 
-    link_* find_to_remove_(const T& key);
+    //
+    // Helpers:
+    //
 
-    static link_* find_next_largest_(link_*);
+    // Finds the pointer to the node where the key is, or the nullptr where
+    // it could be added.
+    link_& search_(const T& key);
 
-    static bool bounded_(node_ const* node, T const* lo, T const* hi);
+    // Finds the pointer to the node containing the next largest element,
+    // assuming the given pointer has at least a right child.
+    static link_& find_next_largest_(link_&);
+
+    // Checks BST invariant for the given node, given low and high bounds for
+    // its values. A null bound means that side is unbounded.
+    static bool bounded_(const node_* node, const T* lo, const T* hi);
 
     friend Tester;
 };
 
 
-
 template<typename T>
-Bst<T>::Bst()
-        : root_(nullptr), size_(0)
-{ }
-
-template<typename T>
-Bst<T>::Bst(std::initializer_list<T> init)
-        : Bst()
+Bst<T>::Bst(std::initializer_list<T> elements)
 {
-    for (const auto& each : init)
+    for (const auto& each : elements)
         insert(each);
 }
 
 template<typename T>
 bool Bst<T>::empty() const
 {
-    assert ((size_ == 0) == (root_ == nullptr));
-    return size_ == 0;
+    return root_ == nullptr;
 }
 
 template<typename T>
@@ -105,25 +115,33 @@ bool Bst<T>::contains(const T& key) const
 }
 
 template<typename T>
-void Bst<T>::insert(const T& key)
+void Bst<T>::insert(T const& key)
 {
-    std::unique_ptr<node_>* curr = &root_;
+    std::unique_ptr<node_>& target = search_(key);
 
-    while (*curr != nullptr) {
-        if (key < (*curr)->data) curr = &(*curr)->left;
-        else if ((*curr)->data < key) curr = &(*curr)->right;
-        else {
-            (*curr)->data = key;
-            return;
-        }
+    if (target == nullptr) {
+        target = std::make_unique<node_>(key);
+        ++size_;
+    } else {
+        target->data = key;
     }
-
-    *curr = std::make_unique<node_>(key);
-    ++size_;
 }
 
 template<typename T>
-typename Bst<T>::link_* Bst<T>::find_to_remove_(const T& key)
+void Bst<T>::insert(T&& key)
+{
+    std::unique_ptr<node_>& target = search_(key);
+
+    if (target == nullptr) {
+        target = std::make_unique<node_>(std::move(key));
+        ++size_;
+    } else {
+        target->data = std::move(key);
+    }
+}
+
+template<typename T>
+auto Bst<T>::search_(const T& key) -> link_&
 {
     std::unique_ptr<node_>* ret = &root_;
 
@@ -135,48 +153,57 @@ typename Bst<T>::link_* Bst<T>::find_to_remove_(const T& key)
         else break;
     }
 
-    return ret;
+    return *ret;
 }
 
-// the next largest node (if there is one), will be the leftmost child of the
+// The next largest node (if there is one), will be the leftmost child of the
 // right child of the given node. If there is no right child, then the input
 // node is the largest (so there is no next largest).
+//
+// PRECONDTION: to_remove is not null, and to_remove->right is not null
 template<typename T>
-typename Bst<T>::link_* Bst<T>::find_next_largest_(link_* to_remove)
+auto Bst<T>::find_next_largest_(link_& to_remove) -> link_&
 {
-    assert(*to_remove != nullptr);
-    assert((*to_remove)->right != nullptr);
+    assert(to_remove != nullptr);
+    assert(to_remove->right != nullptr);
 
-    std::unique_ptr<node_>* ret = &(*to_remove)->right;
+    std::unique_ptr<node_>* ret = &to_remove->right;
 
     while ((*ret)->left != nullptr)
         ret = &(*ret)->left;
 
-    return ret;
+    return *ret;
 }
 
 template<typename T>
 void Bst<T>::remove(const T& key)
 {
-    std::unique_ptr<node_>* to_remove = find_to_remove_(key);
+    link_& to_remove = search_(key);
 
-    // if the node wasn't in the tree, just return. nothing to remove
-    if (*to_remove == nullptr) return;
-
-    // if the right node is null, then we can replace it
-    // by its left child.
-    if ((*to_remove)->right == nullptr) {
-        *to_remove = std::move((*to_remove)->left);
-    } else {
-        // Otherwise, we find the successor node and then swap the contents with
-        // the successor node and delete the successor by replacing it with
-        // its right child.
-        std::unique_ptr<node_>* to_swap = find_next_largest_(to_remove);
-        std::swap((*to_remove)->data, (*to_swap)->data);
-        *to_swap = std::move((*to_swap)->right);
-    }
+    // if the node wasn't in the tree, just return
+    if (to_remove == nullptr) return;
 
     --size_;
+
+    // if the right child is null, then we can just replace it
+    // by its left child.
+    if (to_remove->right == nullptr) {
+        to_remove = std::move(to_remove->left);
+        return;
+    }
+
+    // Otherwise, we have to do it the hard way. First we find the
+    // successor node, and unhook it from the tree, replacing it with
+    // its right child. (It has no left child.)
+    link_& successor = find_next_largest_(to_remove);
+    link_  unhooked  = std::move(successor);
+    successor        = std::move(unhooked->right);
+
+    // Now replace the node that we want to remove with the unhooked
+    // successor node.
+    unhooked->left   = std::move(to_remove->left);
+    unhooked->right  = std::move(to_remove->right);
+    to_remove        = std::move(unhooked);
 }
 
 template<typename T>
@@ -186,7 +213,7 @@ bool Bst<T>::bst_invariant_holds() const
 }
 
 template<typename T>
-bool Bst<T>::bounded_(node_ const* node, T const* lo, T const* hi)
+bool Bst<T>::bounded_(const node_* node, const T* lo, const T* hi)
 {
     if (node == nullptr) return true;
     else return (lo == nullptr || *lo < node->data) &&
