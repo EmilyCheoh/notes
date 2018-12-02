@@ -16,9 +16,14 @@ std::ostream& operator<<(std::ostream& o, const Symbol& sym)
     return o << sym.name();
 }
 
-Symbol intern(const std::string& name)
+Symbol Symbol::intern(const std::string& name)
 {
     return Intern_table::INSTANCE().intern(name);
+}
+
+bool operator!=(const Symbol& a, const Symbol& b)
+{
+    return !(a == b);
 }
 
 Symbol Intern_table::intern(const std::string& name)

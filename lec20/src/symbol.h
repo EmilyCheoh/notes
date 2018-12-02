@@ -19,6 +19,8 @@ public:
         return *ptr_;
     }
 
+    static Symbol intern(const std::string&);
+
     static Symbol uninterned(const std::string&);
 
 private:
@@ -27,12 +29,7 @@ private:
     std::shared_ptr<std::string> ptr_;
 };
 
-Symbol intern(const std::string&);
-
-inline bool operator!=(const Symbol& a, const Symbol& b)
-{
-    return !(a == b);
-}
+bool operator!=(const Symbol&, const Symbol&);
 
 std::ostream& operator<<(std::ostream&, const Symbol&);
 
@@ -44,6 +41,8 @@ public:
     static Intern_table& INSTANCE();
 
 private:
+    Intern_table() = default;
+
     std::unordered_map<std::string, Symbol> table_;
 };
 

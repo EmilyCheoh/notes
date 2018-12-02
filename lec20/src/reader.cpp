@@ -65,7 +65,7 @@ value_ptr read(Lexer& lex)
             return mk_string(tok.value);
 
         case token_type::symbol:
-            return mk_symbol(intern(tok.value));
+            return mk_symbol(Symbol::intern(tok.value));
 
         case token_type::eof:
             throw syntax_error("eof", "token");

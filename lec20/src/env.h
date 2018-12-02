@@ -79,7 +79,7 @@ env_ptr<V> env_ptr<V>::extend(const Symbol& key, const V& value) const
 
 template<typename V>
 env_ptr<V> env_ptr<V>::extend(const std::string& key, const V& value) const {
-    return extend(intern(key), value);
+    return extend(Symbol::intern(key), value);
 }
 
 template<typename V>

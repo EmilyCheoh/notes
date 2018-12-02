@@ -29,7 +29,7 @@ static value_ptr nf(const std::string& name,
                     ssize_t arity,
                     native_function_t code)
 {
-    return value_ptr{new Native_function{intern(name), arity, code}};
+    return value_ptr{new Native_function{Symbol::intern(name), arity, code}};
 }
 
 #define PRIMOP_PROTO(name) value_ptr fn_##name(const std::vector<value_ptr>& args)

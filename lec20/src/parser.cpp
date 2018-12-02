@@ -85,7 +85,7 @@ static Expr parse_cond(const std::vector<value_ptr>& vps)
 
         if (i == vps.size() - 1 &&
                 alt[0]->type() == value_type::Symbol &&
-                alt[0]->as_symbol() == intern("else"))
+                alt[0]->as_symbol() == Symbol::intern("else"))
             alts.push_back({bool_lit(true), parse_expr(alt[1])});
         else
             alts.push_back({parse_expr(alt[0]), parse_expr(alt[1])});
@@ -126,9 +126,12 @@ static Expr parse_combination(const value_ptr& vp)
     if (first->type() == value_type::Symbol) {
         const Symbol& head = first->as_symbol();
 
-        if (head == intern("cond")) return parse_cond(rest);
-        if (head == intern("local")) return parse_local(rest);
-        if (head == intern("lambda")) return parse_lambda(rest);
+        if (head == Symbol::intern("cond"))
+            return parse_cond(rest);
+        if (head == Symbol::intern("local"))
+            return parse_local(rest);
+        if (head == Symbol::intern("lambda"))
+            return parse_lambda(rest);
     }
 
     std::vector<Expr> actuals;
@@ -211,8 +214,9 @@ Decl parse_decl(const value_ptr& vp, bool allow_expr)
         if (first->type() == value_type::Symbol) {
             const Symbol& head = first->as_symbol();
 
-            if (head == intern("define")) return parse_define(rest);
-            if (head == intern("define-struct"))
+            if (head == Symbol::intern("define"))
+                return parse_define(rest);
+            if (head == Symbol::intern("define-struct"))
                 return parse_define_struct(rest);
         }
     }
