@@ -34,8 +34,12 @@ public:
     // Removes an element from the tree, if present.
     void remove(const T&);
 
-    // Move-based insert:
+    // Move-based insert.
     void insert(T&&);
+
+    // Constructs an element in place.
+    template <typename... Args>
+    void emplace(Args&&... args);
 
     bool bst_invariant_holds() const;
 
@@ -48,13 +52,12 @@ private:
         link_ left;
         link_ right;
 
-        node_(T const& value)
-                : data(value), left(nullptr), right(nullptr)
-        { }
-
-        // moves value into node:
-        node_(T&& value)
-                : data(std::move(value)), left(nullptr), right(nullptr)
+        // This is a forwarding constructor--it takes any number of
+        // arguments of any types, and forwards them to the constructor
+        // for type `T` to construct the `data` member.
+        template <typename... Args>
+        node_(Args&&... args)
+                : data(std::forward<Args>(args)...)
         { }
     };
 
@@ -138,6 +141,23 @@ void Bst<T>::insert(T&& key)
     } else {
         target->data = std::move(key);
     }
+}
+
+template <typename T>
+template <typename... Args>
+void Bst<T>::emplace(Args&&... args)
+{
+    link_  new_node = std::make_unique<node_>(std::forward<Args>(args)...);
+    link_& target   = search_(new_node->data);
+
+    if (target == nullptr) {
+        ++size_;
+    } else {
+        new_node->left = std::move(target->left);
+        new_node->right = std::move(target->right);
+    }
+
+    target = std::move(new_node);
 }
 
 template<typename T>

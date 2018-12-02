@@ -105,16 +105,27 @@ TEST_CASE("Insert_then_delete_all")
     CHECK(t.empty());
 }
 
+TEST_CASE("emplace")
+{
+    Bst<std::string> t;
+    t.emplace("hello");
+    t.emplace(6, 'a');
+
+    CHECK_FALSE(t.contains("aaaaa"));
+    CHECK(t.contains("aaaaaa"));
+    CHECK(t.contains("hello"));
+}
+
 TEST_CASE("Invariant")
 {
     Bst<size_t> b;
-    CHECK(b.bst_invariant_holds() == true);
+    CHECK(b.bst_invariant_holds());
     b.insert(0);
-    CHECK(b.bst_invariant_holds() == true);
+    CHECK(b.bst_invariant_holds());
     b.insert(2);
-    CHECK(b.bst_invariant_holds() == true);
+    CHECK(b.bst_invariant_holds());
     b.insert(1);
-    CHECK(b.bst_invariant_holds() == true);
+    CHECK(b.bst_invariant_holds());
 }
 
 void random_test_remove_something(std::uniform_int_distribution<size_t>& dist,
