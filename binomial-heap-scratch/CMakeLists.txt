@@ -3,4 +3,4 @@ project(binomial-heap-scratch)
 
 include(.ipd/cmake/CMakeLists.txt)
 
-add_test_program(binomial-heap-scratch test.cpp)
+add_test_program(binomial-heap-scratch bh.cpp test.cpp)

@@ -134,4 +134,26 @@ A priority queue supports these operations:
 #ifndef X_BH_H
 #define X_BH_H
 
+#include <cstddef>
+#include <vector>
+
+class Binomial_heap {
+public:
+    Binomial_heap();
+    bool empty() const;
+    size_t size() const;
+    void insert(int element); // inserts `element` into `this`
+    int find_min() const;
+    void remove_min();
+
+private:
+    struct node {
+        int element;
+        std::vector<node*> children;
+    };
+
+    std::vector<node*> trees_;
+    size_t size_;
+};
+
 #endif //X_BH_H
