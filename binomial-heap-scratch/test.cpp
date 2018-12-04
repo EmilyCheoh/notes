@@ -79,3 +79,32 @@ TEST_CASE("remove 1")
     CHECK(bh.empty());
     CHECK(bh.size()==0);
 }
+
+TEST_CASE("Test Initialization of B-Heap")
+{
+    Binomial_heap h;
+    CHECK(h.empty());
+    CHECK(h.size() == 0);
+
+}
+
+TEST_CASE("Check insertion operation B-Heap")
+{
+    Binomial_heap h;
+    h.insert(3);
+    h.insert(-3);
+
+    CHECK(h.find_min()==-3);
+    CHECK(h.size() == 2);
+    CHECK_FALSE(h.empty());
+
+    h.remove_min();
+    CHECK(h.find_min()==3);
+    CHECK(h.size() == 1);
+    CHECK_FALSE(h.empty());
+
+    h.remove_min();
+    CHECK(h.size() == 0);
+    CHECK(h.empty());
+
+}

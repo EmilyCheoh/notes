@@ -134,8 +134,8 @@ A priority queue supports these operations:
 #ifndef X_BH_H
 #define X_BH_H
 
-#include <cstddef>
 #include <vector>
+#include <cassert>
 
 class Binomial_heap {
 public:
@@ -149,11 +149,14 @@ public:
 private:
     struct node {
         int element;
-        std::vector<node*> children;
+        std::vector<node*> children; // never contains nullptr
     };
 
-    std::vector<node*> trees_;
+    std::vector<node*> trees_;  // sometimes contains nullptr
     size_t size_;
+    void add_it_in(std::vector<node*> b);
+    size_t Binomial_heap::find_min_index() const;
+
 };
 
 #endif //X_BH_H
