@@ -5,11 +5,13 @@
 
 namespace islpp {
 
+// Reads one s-expression from the given token stream.
 value_ptr read(Lexer&);
 
+// Used to report syntax errors.
 struct syntax_error : std::runtime_error
 {
-    syntax_error(const std::string& s)
+    explicit syntax_error(const std::string& s)
             : std::runtime_error("Syntax error: " + s) {}
 
     syntax_error(const std::string& got, const std::string& exp)
