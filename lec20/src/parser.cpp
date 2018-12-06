@@ -4,6 +4,17 @@
 
 namespace islpp {
 
+namespace kw {
+
+static Symbol const ELSE("else");
+static Symbol const COND("cond");
+static Symbol const LOCAL("local");
+static Symbol const LAMBDA("lambda");
+static Symbol const DEFINE("define");
+static Symbol const DEFINE_STRUCT("define-struct");
+
+}
+
 Expr parse_expr(std::istream& i)
 {
     Lexer lex{i};
@@ -85,7 +96,7 @@ static Expr parse_cond(const std::vector<value_ptr>& vps)
 
         if (i == vps.size() - 1 &&
                 alt[0]->type() == value_type::Symbol &&
-                alt[0]->as_symbol() == Symbol::intern("else"))
+                alt[0]->as_symbol() == kw::ELSE)
             alts.push_back({bool_lit(true), parse_expr(alt[1])});
         else
             alts.push_back({parse_expr(alt[0]), parse_expr(alt[1])});
@@ -126,11 +137,11 @@ static Expr parse_combination(const value_ptr& vp)
     if (first->type() == value_type::Symbol) {
         const Symbol& head = first->as_symbol();
 
-        if (head == Symbol::intern("cond"))
+        if (head == kw::COND)
             return parse_cond(rest);
-        if (head == Symbol::intern("local"))
+        if (head == kw::LOCAL)
             return parse_local(rest);
-        if (head == Symbol::intern("lambda"))
+        if (head == kw::LAMBDA)
             return parse_lambda(rest);
     }
 
@@ -214,9 +225,9 @@ Decl parse_decl(const value_ptr& vp, bool allow_expr)
         if (first->type() == value_type::Symbol) {
             const Symbol& head = first->as_symbol();
 
-            if (head == Symbol::intern("define"))
+            if (head == kw::DEFINE)
                 return parse_define(rest);
-            if (head == Symbol::intern("define-struct"))
+            if (head == kw::DEFINE_STRUCT)
                 return parse_define_struct(rest);
         }
     }

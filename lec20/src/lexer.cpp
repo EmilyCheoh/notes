@@ -42,7 +42,7 @@ std::ostream& operator<<(std::ostream& o, const Token& tok)
 Lexer::Lexer(std::istream& src)
         : src_(src) {}
 
-bool Lexer::get(char& c)
+bool Lexer::get_(char& c)
 {
     if (!src_.get(c)) return false;
 
@@ -78,11 +78,17 @@ static bool issym(char c)
 
 Token Lexer::next()
 {
+    if (!push_back_.empty()) {
+        Token result = std::move(push_back_.back());
+        push_back_.pop_back();
+        return result;
+    }
+
     char c;
 
     start:
     tok_buf_.str("");
-    if (!get(c)) goto eof_finish;
+    if (!get_(c)) goto eof_finish;
 
     if (isspace(c)) goto start;
 
@@ -117,7 +123,7 @@ Token Lexer::next()
         std::ostringstream str_buf;
 
         string_loop:
-        if (!get(c)) goto error_finish;
+        if (!get_(c)) goto error_finish;
         switch (c) {
             case '"':
                 return Token{token_type::string, str_buf.str()};
@@ -129,7 +135,7 @@ Token Lexer::next()
         }
 
         string_backslash:
-        if (!get(c)) goto error_finish;
+        if (!get_(c)) goto error_finish;
         switch (c) {
             case 'n':
                 str_buf << '\n';
@@ -152,7 +158,7 @@ Token Lexer::next()
     // Hash-semi and # symbols
 
     hash_start:
-    if (!get(c)) goto error_finish;
+    if (!get_(c)) goto error_finish;
     switch (c) {
         case ';':
             return Token{token_type::hash_semi, "#;"};
@@ -161,7 +167,7 @@ Token Lexer::next()
     }
 
     semi_start:
-    if (!get(c)) goto eof_finish;
+    if (!get_(c)) goto eof_finish;
     switch (c) {
         case '\n':
             goto start;
@@ -204,6 +210,11 @@ Token Lexer::next()
 
     error_finish:
     return Token{token_type::error, tok_buf_.str()};
+}
+
+void Lexer::push_back(Token tok)
+{
+    push_back_.push_back(std::move(tok));
 }
 
 }

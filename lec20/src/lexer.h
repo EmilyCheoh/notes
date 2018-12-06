@@ -47,9 +47,12 @@ class Lexer
 public:
     explicit Lexer(std::istream& src);
     Token next();
+    void push_back(Token);
 
 private:
-    bool get(char&);
+    bool get_(char&);
+
+    std::vector<Token> push_back_;
     std::istream& src_;
     std::ostringstream tok_buf_;
 };

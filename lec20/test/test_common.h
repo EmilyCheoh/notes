@@ -4,6 +4,6 @@
 
 inline islpp::Symbol sym(const std::string& name)
 {
-    return islpp::Symbol::intern(name);
+    return islpp::Symbol(name);
 }
 

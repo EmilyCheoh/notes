@@ -2,31 +2,30 @@
 
 namespace islpp {
 
-Symbol Symbol::uninterned(const std::string& name)
+Symbol::Symbol(std::string const& name, bool uninterned)
 {
-    return Symbol{name};
+    if (uninterned) {
+        ptr_ = std::make_shared<std::string>(name);
+    } else {
+        ptr_ = Intern_table::INSTANCE().intern(name).ptr_;
+    }
 }
 
-Symbol::Symbol(const std::string& name)
-        : ptr_{std::make_shared<std::string>(name)}
+Symbol::Symbol(char const* name, bool uninterned)
+        : Symbol(std::string(name), uninterned)
 { }
 
-std::ostream& operator<<(std::ostream& o, const Symbol& sym)
+std::ostream& operator<<(std::ostream& o, Symbol const& sym)
 {
     return o << sym.name();
 }
 
-Symbol Symbol::intern(const std::string& name)
-{
-    return Intern_table::INSTANCE().intern(name);
-}
-
-bool operator!=(const Symbol& a, const Symbol& b)
+bool operator!=(Symbol const& a, Symbol const& b)
 {
     return !(a == b);
 }
 
-Symbol Intern_table::intern(const std::string& name)
+Symbol Intern_table::intern(std::string const& name)
 {
     auto iter = table_.find(name);
 
@@ -34,7 +33,7 @@ Symbol Intern_table::intern(const std::string& name)
         return iter->second;
     }
 
-    Symbol sym = Symbol::uninterned(name);
+    Symbol sym(name, true);
     table_.insert({name, sym});
 
     return sym;

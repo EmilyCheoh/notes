@@ -25,14 +25,14 @@ TEST_CASE("hash-semi")
 
 TEST_CASE("Define")
 {
-    CHECK(mk_cons(mk_symbol(Symbol::intern("define")),
-                  mk_cons(mk_symbol(Symbol::intern("a")),
+    CHECK(mk_cons(mk_symbol("define"),
+                  mk_cons(mk_symbol("a"),
                           mk_cons(mk_integer(6),
                                   get_empty())))->equal(
             read_string("(define a 6)")));
 
-    CHECK(mk_cons(mk_symbol(Symbol::intern("define")),
-                  mk_cons(mk_symbol(Symbol::intern("a")),
+    CHECK(mk_cons(mk_symbol("define"),
+                  mk_cons(mk_symbol("a"),
                           mk_cons(mk_integer(6),
                                   get_empty())))->equal(
             read_string("[define a 6]")));

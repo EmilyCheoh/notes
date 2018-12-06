@@ -134,7 +134,7 @@ value_ptr Application::eval(const Environment& env) const
 
 value_ptr Lambda::eval(const Environment& env) const
 {
-    return mk_closure(Symbol::intern("lambda"), formals_, body_, env);
+    return mk_closure("lambda", formals_, body_, env);
 }
 
 value_ptr Cond::eval(const Environment& env) const
@@ -211,14 +211,14 @@ void Define_struct::eval(Environment& env) const
 {
     struct_id_ptr id = std::make_shared<Struct_id>(name_, fields_);
 
-    Symbol constructor = Symbol::intern("make-" + name_.name());
+    Symbol constructor = "make-" + name_.name();
     env.update(constructor, std::make_shared<Constructor>(constructor, id));
 
-    Symbol predicate = Symbol::intern(name_.name() + "?");
+    Symbol predicate = name_.name() + "?";
     env.update(predicate, std::make_shared<Predicate>(predicate, id));
 
     for (size_t i = 0; i < fields_.size(); ++i) {
-        Symbol selector = Symbol::intern(name_.name() + "-" + fields_[i].name());
+        Symbol selector = name_.name() + "-" + fields_[i].name();
         env.update(selector, std::make_shared<Selector>(selector, id, i));
     }
 }
