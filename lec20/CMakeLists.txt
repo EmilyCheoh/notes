@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.3)
 project(isl++ CXX)
 include(.ipd/cmake/CMakeLists.txt)
 
+add_program(simple_interp src/simple_interp.cpp)
+
 add_test_program(symbol_test
         test/symbol_test.cpp
         src/islpp/symbol.cpp)
