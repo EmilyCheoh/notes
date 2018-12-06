@@ -1,4 +1,4 @@
-#include "symbol.h"
+#include "islpp/symbol.h"
 #include <catch.h>
 #include <sstream>
 

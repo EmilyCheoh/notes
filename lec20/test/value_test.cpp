@@ -1,4 +1,4 @@
-#include "value.h"
+#include "islpp/value.h"
 #include "test_common.h"
 
 using namespace islpp;

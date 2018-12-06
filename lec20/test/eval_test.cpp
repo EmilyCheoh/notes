@@ -1,6 +1,6 @@
-#include "ast.h"
-#include "primops.h"
-#include "parser.h"
+#include "islpp/ast.h"
+#include "islpp/primops.h"
+#include "islpp/parser.h"
 #include "test_common.h"
 
 using namespace islpp;

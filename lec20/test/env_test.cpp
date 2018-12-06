@@ -1,4 +1,4 @@
-#include "env.h"
+#include "islpp/env.h"
 #include "test_common.h"
 
 using namespace islpp;

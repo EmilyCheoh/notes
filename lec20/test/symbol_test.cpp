@@ -1,4 +1,4 @@
-#include "symbol.h"
+#include "islpp/symbol.h"
 #include "test_common.h"
 
 using namespace islpp;

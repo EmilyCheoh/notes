@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "islpp/parser.h"
 #include "test_common.h"
 
 using namespace islpp;

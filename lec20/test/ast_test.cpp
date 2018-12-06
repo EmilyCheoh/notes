@@ -1,4 +1,4 @@
-#include "ast.h"
+#include "islpp/ast.h"
 #include "test_common.h"
 
 using namespace islpp;

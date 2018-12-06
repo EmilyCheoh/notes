@@ -1,4 +1,4 @@
-#include "reader.h"
+#include "islpp/reader.h"
 #include "test_common.h"
 
 using namespace islpp;

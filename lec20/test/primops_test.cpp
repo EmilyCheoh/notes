@@ -1,4 +1,4 @@
-#include "primops.h"
+#include "islpp/primops.h"
 #include "test_common.h"
 
 using namespace islpp;

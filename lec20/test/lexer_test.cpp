@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "islpp/lexer.h"
 #include "test_common.h"
 
 #include <vector>
