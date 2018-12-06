@@ -14,9 +14,11 @@ public:
             const std::vector<Symbol>& formals,
             const Expr& body,
             const Environment& env)
-            : Function(name, static_cast<ssize_t>(formals.size())),
-              formals_(formals), body_(body),
-              env_(env) { }
+            : Function(name, static_cast<ssize_t>(formals.size()))
+            , formals_(formals)
+            , body_(body)
+            , env_(env)
+    { }
 
     virtual value_ptr apply(value_ptr_list const&) const override;
 

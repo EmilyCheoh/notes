@@ -9,39 +9,64 @@
 
 namespace islpp {
 
+// Environments map variable names to their values.
 using Environment = env_ptr<value_ptr>;
 
+// Forward declarations.
 class Expr_node;
-
 class Decl_node;
 
+// Typically we will work with expressions and declarations via
+// shared pointers.
 using Expr = std::shared_ptr<Expr_node>;
 using Decl = std::shared_ptr<Decl_node>;
+
+// A program is a sequence of declarations.
 using Prog = std::vector<Decl>;
 
+// Interface describing operations on expressions.
 class Expr_node
 {
 public:
+    // Evaluates this expression in the given environment.
     virtual value_ptr eval(const Environment&) const = 0;
+
+    // Prints this expression to an output stream.
     virtual std::ostream& display(std::ostream&) const = 0;
 
     virtual ~Expr_node() = default;
 };
 
+// Interface describing operations on declarations.
 class Decl_node
 {
 public:
+    // Extends the given environment with the binding(s) of this declaration,
+    // binding each name to the undefined value. (Does not actually evaluate the
+    // declaration.)
     virtual Environment extend(const Environment&) const = 0;
+
+    // Evaluates this declaration, updating the environment with any
+    // necessary values. The environment must have been extended with
+    // `Decl_node::extend` first.
     virtual void eval(Environment&) const = 0;
+
+    // Prints this declaration to an output stream.
     virtual std::ostream& display(std::ostream&) const = 0;
 
     virtual ~Decl_node() = default;
 };
 
+// Evaluates a program in the given environment.
 Environment eval_prog(const Prog&, const Environment&);
 
+// Printing of expressions and declarations.
 std::ostream& operator<<(std::ostream&, const Expr_node&);
 std::ostream& operator<<(std::ostream&, const Decl_node&);
+
+//
+// Factory functions for constructing expressions
+//
 
 Expr var(const Symbol& name);
 Expr app(const Expr& fun, const std::vector<Expr>& actuals);
@@ -52,10 +77,17 @@ Expr int_lit(int val);
 Expr string_lit(const std::string& val);
 Expr bool_lit(bool val);
 
+//
+// Factory functions for constructing declarations.
+//
+
 Decl define_var(const Symbol& name, const Expr& rhs);
 Decl define_fun(const Symbol& name, const std::vector<Symbol>& formals,
                 const Expr& body);
 Decl define_struct(const Symbol& name, const std::vector<Symbol>& fields);
+
+// At the top level of a program, some "declarations" can actually be
+// expressions that are evaluated for the purpose of printing their values.
 Decl expr_decl(const Expr& expr);
 
 /*
