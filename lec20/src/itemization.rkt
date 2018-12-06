@@ -40,10 +40,9 @@
 (define (decode-char ht bs)
   (cond
     [(leaf? ht) (make-success (leaf-symbol ht) bs)]
-    [(cons? bs) (decode-char (if (first bs)
-                                  (internal-right ht)
-                                  (internal-left ht))
-                             (rest bs))]
+    [(cons? bs) (if (first bs)
+                    (decode-char (internal-right ht) (rest bst))
+                    (decode-char (internal-left ht) (rest bst)))]
     [else       #f]))
 
 (check-expect (decode-char EX-HUFFMAN-TREE '(#f #f #f))
