@@ -1,9 +1,7 @@
 #include "ast.h"
 #include "primops.h"
 #include "parser.h"
-
-#include <catch.h>
-#include <sstream>
+#include "test_common.h"
 
 using namespace islpp;
 
@@ -20,7 +18,7 @@ TEST_CASE("True")
 
 TEST_CASE("Lambda")
 {
-    Symbol      a = intern("a"), b = intern("b");
+    Symbol      a = sym("a"), b = sym("b");
     Environment env;
 
     Expr l5 = int_lit(5);
@@ -35,17 +33,17 @@ TEST_CASE("Lambda")
 
 TEST_CASE("Factorial")
 {
-    Symbol n    = intern("n"),
-           fact = intern("fact");
+    Symbol n    = sym("n"),
+           fact = sym("fact");
 
     Expr body = cond(
-            {{app(var(intern("zero?")), {var(n)}),
+            {{app(var(sym("zero?")), {var(n)}),
                      int_lit(1)},
              {bool_lit(true),
-                     app(var(intern("*")),
+                     app(var(sym("*")),
                          {var(n),
                           app(var(fact),
-                              {app(var(intern("-")),
+                              {app(var(sym("-")),
                                    {var(n), int_lit(1)})})})}});
 
     Expr e = local({define_fun(fact, {n}, body)},
@@ -56,27 +54,27 @@ TEST_CASE("Factorial")
 
 TEST_CASE("Posn")
 {
-    Symbol posn = intern("posn");
+    Symbol posn = sym("posn");
 
-    Decl decl1 = define_struct(posn, {intern("x"), intern("y")});
-    Decl decl2 = define_var(intern("p"),
-                            app(var(intern("make-posn")),
+    Decl decl1 = define_struct(posn, {sym("x"), sym("y")});
+    Decl decl2 = define_var(sym("p"),
+                            app(var(sym("make-posn")),
                                 {int_lit(3), int_lit(4)}));
 
     CHECK(local({decl1, decl2},
-                app(var(intern("posn?")), {var(intern("p"))}))
+                app(var(sym("posn?")), {var(sym("p"))}))
                   ->eval(primop::environment) ==
           get_boolean(true));
     CHECK(local({decl1, decl2},
-                app(var(intern("cons?")), {var(intern("p"))}))
+                app(var(sym("cons?")), {var(sym("p"))}))
                   ->eval(primop::environment) ==
           get_boolean(false));
     CHECK(local({decl1, decl2},
-                app(var(intern("posn-x")), {var(intern("p"))}))
+                app(var(sym("posn-x")), {var(sym("p"))}))
                   ->eval(primop::environment)->as_int() ==
           3);
     CHECK(local({decl1, decl2},
-                app(var(intern("posn-y")), {var(intern("p"))}))
+                app(var(sym("posn-y")), {var(sym("p"))}))
                   ->eval(primop::environment)->as_int() ==
           4);
 }

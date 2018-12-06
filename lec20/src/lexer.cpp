@@ -72,18 +72,12 @@ static bool issym(char c)
         case '#':
             return true;
         default:
-            return isalnum(c);
+            return isalnum(c) != 0;
     }
 }
 
 Token Lexer::next()
 {
-    if (!push_back_.empty()) {
-        Token result = push_back_.back();
-        push_back_.pop_back();
-        return result;
-    }
-
     char c;
 
     start:
@@ -210,11 +204,6 @@ Token Lexer::next()
 
     error_finish:
     return Token{token_type::error, tok_buf_.str()};
-}
-
-void Lexer::push_back(const Token& tok)
-{
-    push_back_.push_back(tok);
 }
 
 }

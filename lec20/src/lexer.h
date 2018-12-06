@@ -45,13 +45,11 @@ std::ostream& operator<<(std::ostream&, const Token&);
 class Lexer
 {
 public:
-    Lexer(std::istream& src);
+    explicit Lexer(std::istream& src);
     Token next();
-    void push_back(const Token&);
 
 private:
     bool get(char&);
-    std::vector<Token> push_back_;
     std::istream& src_;
     std::ostringstream tok_buf_;
 };

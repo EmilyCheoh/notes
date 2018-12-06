@@ -2,7 +2,7 @@
 
 namespace islpp {
 
-const char* to_string(value_type vt)
+char const* to_string(value_type vt)
 {
     switch (vt) {
         case value_type::Boolean:
@@ -50,37 +50,37 @@ int Value::as_int() const
     throw type_error(type_name(), "integer");
 }
 
-const std::string& Value::as_string() const
+std::string const& Value::as_string() const
 {
     throw type_error(type_name(), "string");
 }
 
-const Symbol& Value::as_symbol() const
+Symbol const& Value::as_symbol() const
 {
     throw type_error(type_name(), "symbol");
 }
 
-const value_ptr& Value::first() const
+value_ptr const& Value::first() const
 {
     throw type_error(type_name(), "cons");
 }
 
-const value_ptr& Value::rest() const
+value_ptr const& Value::rest() const
 {
     throw type_error(type_name(), "cons");
 }
 
-const struct_id_ptr& Value::struct_id() const
+struct_id_ptr const& Value::struct_id() const
 {
     throw type_error(type_name(), "struct");
 }
 
-const std::vector<value_ptr>& Value::get_fields() const
+value_ptr_list const& Value::get_fields() const
 {
     throw type_error(type_name(), "struct");
 }
 
-value_ptr Value::operator()(const std::vector<value_ptr>&) const
+value_ptr Value::operator()(value_ptr_list const&) const
 {
     throw type_error(type_name(), "function");
 }
@@ -99,7 +99,7 @@ public:
 
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 
 private:
     bool val_;
@@ -128,7 +128,7 @@ std::ostream& Boolean::display(std::ostream& o) const
     return o << (val_ ? "#true" : "#false");
 }
 
-bool Boolean::equal(const value_ptr& other) const
+bool Boolean::equal(value_ptr const& other) const
 {
     return other->type() == value_type::Boolean
            && val_ == other->as_bool();
@@ -147,7 +147,7 @@ public:
 
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 
 private:
     int val_;
@@ -168,7 +168,7 @@ value_type Integer::type() const
     return value_type::Integer;
 }
 
-bool Integer::equal(const value_ptr& other) const
+bool Integer::equal(value_ptr const& other) const
 {
     return other->type() == value_type::Integer
            && val_ == other->as_int();
@@ -186,24 +186,24 @@ std::ostream& Integer::display(std::ostream& o) const
 class String : public Value
 {
 public:
-    explicit String(const std::string& val) : val_(val) { }
+    explicit String(std::string const& val) : val_(val) { }
 
-    virtual const std::string& as_string() const override;
+    virtual std::string const& as_string() const override;
 
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 
 private:
     std::string val_;
 };
 
-value_ptr mk_string(const std::string& val)
+value_ptr mk_string(std::string const& val)
 {
     return value_ptr{new String{val}};
 }
 
-const std::string& String::as_string() const
+std::string const& String::as_string() const
 {
     return val_;
 }
@@ -213,7 +213,7 @@ value_type String::type() const
     return value_type::String;
 }
 
-bool String::equal(const value_ptr& other) const
+bool String::equal(value_ptr const& other) const
 {
     return other->type() == value_type::String
            && val_ == other->as_string();
@@ -231,24 +231,24 @@ std::ostream& String::display(std::ostream& o) const
 class Symbol_value : public Value
 {
 public:
-    explicit Symbol_value(const Symbol& val) : val_(val) { }
+    explicit Symbol_value(Symbol const& val) : val_(val) { }
 
-    virtual const Symbol& as_symbol() const override;
+    virtual Symbol const& as_symbol() const override;
 
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 
 private:
     Symbol val_;
 };
 
-value_ptr mk_symbol(const Symbol& val)
+value_ptr mk_symbol(Symbol const& val)
 {
     return value_ptr{new Symbol_value{val}};
 }
 
-const Symbol& Symbol_value::as_symbol() const
+Symbol const& Symbol_value::as_symbol() const
 {
     return val_;
 }
@@ -258,7 +258,7 @@ value_type Symbol_value::type() const
     return value_type::Symbol;
 }
 
-bool Symbol_value::equal(const value_ptr& other) const
+bool Symbol_value::equal(value_ptr const& other) const
 {
     return other->type() == value_type::Symbol
            && val_ == other->as_symbol();
@@ -276,12 +276,12 @@ std::ostream& Symbol_value::display(std::ostream& o) const
 class Cons : public Value
 {
 public:
-    Cons(const value_ptr& first, const value_ptr& rest)
+    Cons(value_ptr const& first, value_ptr const& rest)
             : first_{first}, rest_{rest} { }
 
-    virtual const value_ptr& first() const override;
-    virtual const value_ptr& rest() const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual value_ptr const& first() const override;
+    virtual value_ptr const& rest() const override;
+    virtual bool equal(value_ptr const&) const override;
 
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
@@ -290,17 +290,17 @@ private:
     value_ptr first_, rest_;
 };
 
-value_ptr mk_cons(const value_ptr& first, const value_ptr& rest)
+value_ptr mk_cons(value_ptr const& first, value_ptr const& rest)
 {
     return value_ptr{new Cons{first, rest}};
 }
 
-const value_ptr& Cons::first() const
+value_ptr const& Cons::first() const
 {
     return first_;
 }
 
-const value_ptr& Cons::rest() const
+value_ptr const& Cons::rest() const
 {
     return rest_;
 }
@@ -321,7 +321,7 @@ std::ostream& Cons::display(std::ostream& o) const
     return o;
 }
 
-bool Cons::equal(const value_ptr& other) const
+bool Cons::equal(value_ptr const& other) const
 {
     return other->type() == value_type::Cons
            && first_->equal(other->first())
@@ -337,7 +337,7 @@ struct Empty : public Value
 public:
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 };
 
 value_ptr get_empty()
@@ -356,7 +356,7 @@ std::ostream& Empty::display(std::ostream& o) const
     return o << "'()";
 }
 
-bool Empty::equal(const value_ptr& other) const
+bool Empty::equal(value_ptr const& other) const
 {
     return other->type() == value_type::Empty;
 }
@@ -370,7 +370,7 @@ struct Undefined : public Value
 public:
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 };
 
 value_ptr get_undefined()
@@ -389,7 +389,7 @@ std::ostream& Undefined::display(std::ostream& o) const
     return o << "#<undefined>";
 }
 
-bool Undefined::equal(const value_ptr& other) const
+bool Undefined::equal(value_ptr const& other) const
 {
     return other->type() == value_type::Undefined;
 }
@@ -401,33 +401,33 @@ bool Undefined::equal(const value_ptr& other) const
 class Struct : public Value
 {
 public:
-    Struct(const struct_id_ptr& id, std::vector<value_ptr> vals)
+    Struct(struct_id_ptr const& id, value_ptr_list const& vals)
             : id_{id}, vals_(vals) { }
 
-    virtual const struct_id_ptr         & struct_id() const override;
-    virtual const std::vector<value_ptr>& get_fields() const override;
+    virtual struct_id_ptr const& struct_id() const override;
+    virtual value_ptr_list const& get_fields() const override;
 
     virtual value_type  type() const override;
     virtual std::string type_name() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 
 private:
-    struct_id_ptr          id_;
-    std::vector<value_ptr> vals_;
+    struct_id_ptr id_;
+    value_ptr_list vals_;
 };
 
-value_ptr mk_struct(const struct_id_ptr& id, std::vector<value_ptr> vals)
+value_ptr mk_struct(struct_id_ptr const& id, const value_ptr_list& vals)
 {
     return value_ptr{new Struct{id, vals}};
 }
 
-const struct_id_ptr& Struct::struct_id() const
+struct_id_ptr const& Struct::struct_id() const
 {
     return id_;
 }
 
-const std::vector<value_ptr>& Struct::get_fields() const
+value_ptr_list const& Struct::get_fields() const
 {
     return vals_;
 }
@@ -457,7 +457,7 @@ std::ostream& Struct::display(std::ostream& o) const
     return o;
 }
 
-bool Struct::equal(const value_ptr& other) const
+bool Struct::equal(value_ptr const& other) const
 {
     if (other->type() != value_type::Struct) return false;
     if (id_ != other->struct_id()) return false;
@@ -476,7 +476,7 @@ bool Struct::equal(const value_ptr& other) const
  * Function members
  */
 
-value_ptr Function::operator()(const std::vector<value_ptr>& args) const
+value_ptr Function::operator()(value_ptr_list const& args) const
 {
     if (arity_ < 0 ? args.size() < -1 - arity_ : args.size() != arity_)
         throw arity_error(args.size(), arity_);
@@ -494,12 +494,12 @@ std::ostream& Function::display(std::ostream& o) const
     return o << "<#function:" << name_ << '>';
 }
 
-bool Function::equal(const value_ptr&) const
+bool Function::equal(value_ptr const&) const
 {
     return false;
 }
 
-Function::Function(const Symbol& name, ssize_t arity)
+Function::Function(Symbol const& name, ssize_t arity)
         : arity_{arity}, name_{name} { }
 
 }

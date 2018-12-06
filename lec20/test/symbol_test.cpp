@@ -1,5 +1,5 @@
 #include "symbol.h"
-#include <catch.h>
+#include "test_common.h"
 
 using namespace islpp;
 

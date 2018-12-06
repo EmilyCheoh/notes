@@ -1,7 +1,5 @@
 #include "reader.h"
-#include <catch.h>
-
-#include <sstream>
+#include "test_common.h"
 
 using namespace islpp;
 
@@ -17,16 +15,24 @@ TEST_CASE("Integer")
     CHECK(mk_integer(5)->equal(read_string("5")));
 }
 
+TEST_CASE("hash-semi")
+{
+    CHECK(mk_integer(5)->equal(read_string("#;7 5")));
+    CHECK(mk_integer(5)->equal(read_string("#;(7 8 9) 5")));
+    CHECK(mk_integer(5)->equal(read_string("#; #;(7 8 9) 5")));
+    CHECK(mk_integer(5)->equal(read_string("#; #;(7 8 9) #;foo 5")));
+}
+
 TEST_CASE("Define")
 {
-    CHECK(mk_cons(mk_symbol(intern("define")),
-                  mk_cons(mk_symbol(intern("a")),
+    CHECK(mk_cons(mk_symbol(Symbol::intern("define")),
+                  mk_cons(mk_symbol(Symbol::intern("a")),
                           mk_cons(mk_integer(6),
                                   get_empty())))->equal(
             read_string("(define a 6)")));
 
-    CHECK(mk_cons(mk_symbol(intern("define")),
-                  mk_cons(mk_symbol(intern("a")),
+    CHECK(mk_cons(mk_symbol(Symbol::intern("define")),
+                  mk_cons(mk_symbol(Symbol::intern("a")),
                           mk_cons(mk_integer(6),
                                   get_empty())))->equal(
             read_string("[define a 6]")));

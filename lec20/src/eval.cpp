@@ -18,7 +18,7 @@ public:
               formals_(formals), body_(body),
               env_(env) { }
 
-    virtual value_ptr apply(const std::vector<value_ptr>&) const override;
+    virtual value_ptr apply(value_ptr_list const&) const override;
 
 private:
     std::vector<Symbol> formals_;
@@ -34,7 +34,7 @@ value_ptr mk_closure(const Symbol& name,
     return std::make_shared<Closure>(name, formals, body, env);
 }
 
-value_ptr Closure::apply(const std::vector<value_ptr>& actuals) const
+value_ptr Closure::apply(value_ptr_list const& actuals) const
 {
     // Checked by operator():
     assert(actuals.size() == formals_.size());
@@ -56,14 +56,14 @@ public:
     Constructor(const Symbol& name, const struct_id_ptr& id)
             : Function(name, id->fields.size()), id_(id) { }
 
-    virtual value_ptr apply(const std::vector<value_ptr>&) const override;
+    virtual value_ptr apply(value_ptr_list const&) const override;
 
 private:
     struct_id_ptr id_;
 };
 
 
-value_ptr Constructor::apply(const std::vector<value_ptr>& actuals) const
+value_ptr Constructor::apply(value_ptr_list const& actuals) const
 {
     return mk_struct(id_, actuals);
 }
@@ -74,13 +74,13 @@ public:
     Predicate(const Symbol& name, const struct_id_ptr& id)
             : Function(name, 1), id_(id) { }
 
-    virtual value_ptr apply(const std::vector<value_ptr>&) const override;
+    virtual value_ptr apply(value_ptr_list const&) const override;
 
 private:
     struct_id_ptr id_;
 };
 
-value_ptr Predicate::apply(const std::vector<value_ptr>& actuals) const
+value_ptr Predicate::apply(value_ptr_list const& actuals) const
 {
     return get_boolean(actuals[0]->type() == value_type::Struct
                        && actuals[0]->struct_id() == id_);
@@ -92,14 +92,14 @@ public:
     Selector(const Symbol& name, const struct_id_ptr& id, size_t field)
             : Function(name, 1), id_(id), field_(field) { }
 
-    virtual value_ptr apply(const std::vector<value_ptr>&) const override;
+    virtual value_ptr apply(value_ptr_list const&) const override;
 
 private:
     struct_id_ptr id_;
     size_t field_;
 };
 
-value_ptr Selector::apply(const std::vector<value_ptr>& actuals) const
+value_ptr Selector::apply(value_ptr_list const& actuals) const
 {
     if (actuals[0]->type() == value_type::Struct
         && actuals[0]->struct_id() == id_) {
@@ -124,7 +124,7 @@ value_ptr Application::eval(const Environment& env) const
 {
     value_ptr fun = fun_->eval(env);
 
-    std::vector<value_ptr> actuals;
+    value_ptr_list actuals;
 
     for (const auto& actual : actuals_)
         actuals.push_back(actual->eval(env));

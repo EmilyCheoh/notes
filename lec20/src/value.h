@@ -25,18 +25,19 @@ enum class value_type
     Undefined,
 };
 
-const char* to_string(value_type);
+char const* to_string(value_type);
 std::ostream& operator<<(std::ostream&, value_type);
 
 class Value;
 
 using value_ptr = std::shared_ptr<Value>;
+using value_ptr_list = std::vector<value_ptr>;
 
 value_ptr mk_integer(int);
-value_ptr mk_string(const std::string&);
-value_ptr mk_symbol(const Symbol&);
-value_ptr mk_cons(const value_ptr&, const value_ptr&);
-value_ptr mk_struct(const struct_id_ptr&, std::vector<value_ptr>);
+value_ptr mk_string(std::string const&);
+value_ptr mk_symbol(Symbol const&);
+value_ptr mk_cons(value_ptr const&, value_ptr const&);
+value_ptr mk_struct(struct_id_ptr const&, const value_ptr_list&);
 
 value_ptr get_boolean(bool);
 value_ptr get_empty();
@@ -49,50 +50,52 @@ public:
     virtual std::string type_name() const;
 
     virtual std::ostream& display(std::ostream&) const = 0;
-    virtual bool equal(const value_ptr&) const = 0;
+    virtual bool equal(value_ptr const&) const = 0;
 
     virtual bool as_bool() const;
     virtual int  as_int() const;
-    virtual const std::string           & as_string() const;
-    virtual const Symbol                & as_symbol() const;
-    virtual const value_ptr             & first() const;
-    virtual const value_ptr             & rest() const;
-    virtual const struct_id_ptr         & struct_id() const;
-    virtual const std::vector<value_ptr>& get_fields() const;
-    virtual value_ptr operator()(const std::vector<value_ptr>&) const;
+    virtual std::string    const& as_string() const;
+    virtual Symbol         const& as_symbol() const;
+    virtual value_ptr      const& first() const;
+    virtual value_ptr      const& rest() const;
+    virtual struct_id_ptr  const& struct_id() const;
+    virtual value_ptr_list const& get_fields() const;
+    virtual value_ptr operator()(value_ptr_list const&) const;
+
+    virtual ~Value() = default;
 };
 
 class Function : public Value
 {
 public:
-    virtual value_ptr operator()(const std::vector<value_ptr>&) const override;
+    virtual value_ptr operator()(value_ptr_list const&) const override;
 
     virtual value_type type() const override;
     virtual std::ostream& display(std::ostream&) const override;
-    virtual bool equal(const value_ptr&) const override;
+    virtual bool equal(value_ptr const&) const override;
 
 protected:
-    Function(const Symbol& name, ssize_t arity);
+    Function(Symbol const& name, ssize_t arity);
 
-    virtual value_ptr apply(const std::vector<value_ptr>&) const = 0;
+    virtual value_ptr apply(value_ptr_list const&) const = 0;
 
     ssize_t arity_;
     Symbol  name_;
 };
 
-inline std::ostream& operator<<(std::ostream& o, const Value& v)
+inline std::ostream& operator<<(std::ostream& o, Value const& v)
 {
     return v.display(o);
 }
 
-inline std::ostream& operator<<(std::ostream& o, const value_ptr& v)
+inline std::ostream& operator<<(std::ostream& o, value_ptr const& v)
 {
     return v->display(o);
 }
 
 struct type_error : std::runtime_error
 {
-    type_error(const std::string& got, const std::string& exp)
+    type_error(std::string const& got, std::string const& exp)
             : runtime_error("Type error: got " + got +
                             " where " + exp + " expected.") { }
 };

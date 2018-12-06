@@ -1,22 +1,22 @@
 #include "env.h"
-#include <catch.h>
+#include "test_common.h"
 
 using namespace islpp;
 
 TEST_CASE("LookupEmpty")
 {
     env_ptr<int> empty;
-    Symbol a = intern("a");
+    Symbol a = sym("a");
 
     CHECK_THROWS_AS(empty.lookup(a), binding_not_found);
 }
 
 TEST_CASE("LookupBound")
 {
-    Symbol a = intern("a"),
-           b = intern("b"),
-           c = intern("c"),
-           d = intern("d");
+    Symbol a = sym("a"),
+           b = sym("b"),
+           c = sym("c"),
+           d = sym("d");
     env_ptr<int> env = env_ptr<int>{}.extend(a, 2).extend(b, 3).extend(c, 4);
 
     CHECK(env.lookup(a) == 2);
@@ -27,8 +27,8 @@ TEST_CASE("LookupBound")
 
 TEST_CASE("LookupShadow")
 {
-    Symbol a = intern("a"),
-           b = intern("b");
+    Symbol a = sym("a"),
+           b = sym("b");
     env_ptr<int> env1 = env_ptr<int>{}.extend(a, 2).extend(b, 3);
     env_ptr<int> env2 = env1.extend(a, 5);
 
@@ -40,8 +40,8 @@ TEST_CASE("LookupShadow")
 
 TEST_CASE("Update")
 {
-    Symbol a = intern("a"),
-           b = intern("b");
+    Symbol a = sym("a"),
+           b = sym("b");
     env_ptr<int> env1 = env_ptr<int>{}.extend(a, 2).extend(b, 3);
     env_ptr<int> env2 = env1.extend(a, 5);
 

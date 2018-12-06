@@ -24,6 +24,8 @@ class Expr_node
 public:
     virtual value_ptr eval(const Environment&) const = 0;
     virtual std::ostream& display(std::ostream&) const = 0;
+
+    virtual ~Expr_node() = default;
 };
 
 class Decl_node
@@ -32,6 +34,8 @@ public:
     virtual Environment extend(const Environment&) const = 0;
     virtual void eval(Environment&) const = 0;
     virtual std::ostream& display(std::ostream&) const = 0;
+
+    virtual ~Decl_node() = default;
 };
 
 Environment eval_prog(const Prog&, const Environment&);
@@ -224,6 +228,7 @@ public:
     virtual Environment extend(const Environment&) const override;
     virtual void eval(Environment&) const override;
     virtual std::ostream& display(std::ostream&) const override;
+
 private:
     Expr expr_;
 };

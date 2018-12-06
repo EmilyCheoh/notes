@@ -1,7 +1,5 @@
 #include "value.h"
-
-#include <catch.h>
-#include <sstream>
+#include "test_common.h"
 
 using namespace islpp;
 

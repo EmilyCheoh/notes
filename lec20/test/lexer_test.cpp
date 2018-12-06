@@ -1,8 +1,6 @@
 #include "lexer.h"
+#include "test_common.h"
 
-#include <catch.h>
-
-#include <sstream>
 #include <vector>
 
 using namespace islpp;
