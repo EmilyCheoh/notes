@@ -1,10 +1,11 @@
 #include "primops.h"
+#include <cstdlib>
 
 namespace islpp {
 
 namespace primop {
 
-typedef value_ptr (* native_function_t)(const std::vector<value_ptr>&);
+using native_function_t = value_ptr (*)(value_ptr_list const&);
 
 class Native_function : public Function
 {
@@ -97,6 +98,12 @@ PRIMOP("cons?", cons_huh, 1)
     return get_boolean(args[0]->type() == value_type::Cons);
 }
 
+PRIMOP("exit", isl_exit, 0)
+{
+    std::exit(0);
+    return get_undefined();
+}
+
 env_ptr<value_ptr> environment =
         env_ptr<value_ptr>{}
                 .extend("empty",  get_empty())
@@ -114,7 +121,8 @@ env_ptr<value_ptr> environment =
                 .extend("first",  first)
                 .extend("rest",   rest)
                 .extend("empty?", empty_huh)
-                .extend("cons?",  cons_huh);
+                .extend("cons?",  cons_huh)
+                .extend("exit",   isl_exit);
 
 } // end namespace primop
 
