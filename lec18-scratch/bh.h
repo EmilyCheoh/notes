@@ -154,7 +154,7 @@ private:
 
     std::vector<node*> trees_;  // sometimes contains nullptr
     size_t size_;
-    void add_it_in(std::vector<node*> b);
+    void add_it_in(std::vector<std::unique_ptr<node>> b);
     size_t Binomial_heap::find_min_index() const;
 
 };

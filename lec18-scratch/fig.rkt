@@ -31,10 +31,10 @@
 
 (define (tr0 n) (tr n '()))
 
-(define one (tr0 11))
+(define one (tr0 12))
 (define two (join (tr0 33)
                   (tr0 44)))
-(define three (join (join (tr0 12)
+(define three (join (join (tr0 11)
                           (tr0 14))
                     (join (tr0 18)
                           (tr0 19))))
