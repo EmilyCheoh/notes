@@ -1,30 +1,29 @@
     [BSL]
-00  09/24: welcome (J); the algebras of images and strings (J); big bang (J)
-01  09/26: structures (R); enumerations (R); itemizations of every kind (R)
+00  09/24: welcome (R); the algebras of images and strings (R); big bang (R); git intro i (J)
+01  09/26: structures (R); enumerations (R); itemizations of every kind (R); git intro ii (J)
 02  10/01: linked lists (R); asymptotic analysis (R)
 03  10/03: abstracting fns (R); list abstractions (R); polymorphism (R)
     [ISL]
 04  10/08: filesystem trees (R); invariants (R); AVL trees (R)
-** (10/09 Robby possibly missing)
 05  10/10: ADTs (stacks and queues) (J); banker’s queues (J); random BSTs (J)
 06  10/15: binomial heap (R); generative recursion (R); sorting (R)
     [ISL+]
 07  10/17: accumulators (R); nats (R); graph representations (R)
 08  10/22: laziness/streams (R); state, vectors (R)
-    [DSSL2]
-09  10/24: graph search (J); Bellman–Ford and Dijkstra’s algorithms (J)
+    [ASL]
+09  10/24: graph search (R); Bellman–Ford and Dijkstra’s algorithms (R)
 10  10/29: union-find (J); Kruskal’s algorithm (J); slack
 11  10/31: welcome to C++ (J); structs and functions (J); vectors (J)
-    [C++]
 12  11/05: Exam
+    [C++]
     11/07: classes and data hiding (J); union-find, again (J); a graph class (J)
 13  11/12: binary heap (J); making heap generic (J); model-view-controller (J)
 14  11/14: more MVC (J); memory & pointers (J); linked data structures (J)
 15  11/19: Huffman coding (J); DLL deque (J); final project discussion
-    11/21: hashing (J); hash tables (J); Bloom filter (J)
-16  11/26: binomial heap (R)
+    11/21: hashing (R); hash tables (R); Bloom filter (R)
+16  11/26: binomial heap (J)
 17  11/28: – Thanksgiving –
-18  12/03:
+18  12/03: (J)
 19  12/05: ISL+λ interpreter (R)
 
 Weekly schedule:
