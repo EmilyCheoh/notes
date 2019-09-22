@@ -1,4 +1,4 @@
-# IPD Setup, Part 1
+# IPD Setup: Racket, Git, and GitHub
 
 Before we can get started we need to install our development
 environment. You’ll need Racket 7.4 for programming and Git for version
