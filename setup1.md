@@ -1,4 +1,4 @@
-# IPD Setup, Part 1
+# IPD Setup: Racket, Git, and GitHub
 
 Before we can get started we need to install our development
 environment. You’ll need Racket 7.4 for programming and Git for version
@@ -91,15 +91,15 @@ On Windows, you need to install Git and Racket separately:
     “Use Git from the Windows Command Prompt” instead of the default
     option. Then continue clicking “Next” until the installation
     completes.
-
+    
     To test that Git is installed properly, open a command prompt,
     type the command `git version` and press return. Git should reply
     with version information:
-
-    ```PowerShell
-    PS C:\Users\jesse> git version
+    
+    ```
+    C:\Users\jesse> git version
     git version 2.20.1.windows.1
-    PS C:\Users\jesse> 
+    C:\Users\jesse> 
     ```
 
  2. Run the [Racket installer][Racket download]. Then make sure you can
