@@ -1,7 +1,7 @@
 Intensive Program Design
 ========================
 
-Web page: http://users.eecs.northwestern.edu/~jesse/course/ipd/
+Web page: https://www.cs.northwestern.edu/~jesse/course/ipd/
 
 When you need to show up:
   - TuTh, in this room from 12 to 3
@@ -10,8 +10,8 @@ When you need to show up:
 Course staff:
 
   Instructors:
-    - Jesse Tov, jesse@eecs
-    - Robby Findler, robby@eecs
+    - Jesse Tov, jesse@cs
+    - Robby Findler, robby@cs
 
   TA:
     - Lukas Lazarek, LukasLazarek2018@u.northwestern.edu
