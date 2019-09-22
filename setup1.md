@@ -96,7 +96,7 @@ On Windows, you need to install Git and Racket separately:
     type the command `git version` and press return. Git should reply
     with version information:
     
-    ```PowerShell
+    ```
     C:\Users\jesse> git version
     git version 2.20.1.windows.1
     C:\Users\jesse> 
