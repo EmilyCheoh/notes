@@ -82,16 +82,6 @@ New design recipe:
     [(string=? light "green")  "go"]))
 
 
-; color-of-light-in-french : TrafficLight -> String
-; To find the color of a traffic light
+; traffic-light-wavelength : TrafficLight -> Number
+; To find the wavelength of the traffic light, in nanometers.
 
-(check-expect (color-of-light-in-french "red")    "rouge")
-(check-expect (color-of-light-in-french "green")  "vert")
-(check-expect (color-of-light-in-french "amber")  "jaune")
-
-; Strategy: struct. decomp.
-(define (color-of-light-in-french light)
-   (cond
-    [(string=? light "red")    "rouge"]
-    [(string=? light "amber")  "jaune"]
-    [(string=? light "green")  "vert"]))
