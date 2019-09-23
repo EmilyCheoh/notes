@@ -7,7 +7,7 @@ control.
 [CLT]:
     https://developer.apple.com/downloads/
 
-[Git download]:
+[Git installer]:
     https://git-scm.com/download/win/
 
 [GitHub sign-up]:
@@ -16,7 +16,7 @@ control.
 [Homebrew]:
     https://brew.sh/
 
-[Racket download]:
+[Racket installer]:
     https://download.racket-lang.org/
 
 ## GitHub Registration
@@ -40,13 +40,13 @@ Setup instructions vary by platform:
 
 You will need to download:
 
-  - [Git download]
+  - [Git installer]
 
-  - [Racket download]
+  - [Racket installer]
 
 ### Installing Git
 
-Run the [Git installer][Git download]. Click “Next” for each
+Run the [Git installer]. Click “Next” for each
 question until “Adjusting your PATH environment” appears. Select
 “Use Git from the Windows Command Prompt” instead of the default
 option. Then continue clicking “Next” until the installation
@@ -64,7 +64,7 @@ C:\Users\jesse>
 
 ### Installing Racket
 
-Run the [Racket installer][Racket download]. Then make sure you can run
+Run the [Racket installer]. Then make sure you can run
 DrRacket.
 
 
@@ -137,5 +137,5 @@ Make sure you can run DrRacket, which should be installed as
 Make sure you have a recent Git.
 
 Install Racket 7.4 either via your preferred package manager or from
-[the Racket website][Racket download].
+[the Racket website][Racket installer].
 
