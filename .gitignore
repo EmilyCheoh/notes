@@ -1,0 +1,9 @@
+# Racket build artifacts:
+compiled/
+
+# Code coverage artifacts:
+coverage/
+
+# Racket backup files:
+*~
+*.bak
