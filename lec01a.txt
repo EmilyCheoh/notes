@@ -30,7 +30,10 @@ Pair programming:
   - No divide and conquer or you will get bad grades
 
 Grading (tentative):
-  - code walks: 70%
+  - homeworks: 70%
+     - presentation grade (individual, given during codewalk)
+     - code grade (shared with your partner, given after rerevision)
+     - all of these grades are on a scale: ✓+, ✓, ✓-, zero
   - exam: 30%
 
 Cheating
