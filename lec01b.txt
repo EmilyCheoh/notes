@@ -1,5 +1,5 @@
-This Course
------------
+Intensive Program Design Content
+================================
 
 This course is about the fundamentals of
 programming (and computation):
@@ -19,8 +19,8 @@ This course is *not* about:
 
   - Programming tools (DrRacket, gcc, gdb, javac, etc etc)
       Again, we need something, so we
-      picked DrRacket, but it is designed
-      to stay out of the way, as much as possible.
+      picked DrRacket and CLion, and we hope they
+      stay out of the way as much as possible.
 
   - Specific libraries or protocols (http, XML, Gtk, etc)
       We might see glimpses of these in exercises,
@@ -29,7 +29,7 @@ This course is *not* about:
 
   - How programs get translated to digital signals
       Programming digital computers, or programming
-      with genes in test tubes -- it doesn't matter.
+      with genes in test tubes -- it isn't covered here.
       We don't study the details of that; we study
       how to contruct and maintain the programs
       themselves.

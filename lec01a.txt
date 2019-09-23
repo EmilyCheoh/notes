@@ -1,11 +1,11 @@
-Intensive Program Design
-========================
+Intensive Program Design Logistics
+==================================
 
 Web page: https://www.cs.northwestern.edu/~jesse/course/ipd/
 
 When you need to show up:
   - TuTh, in this room from 12 to 3
-  - A half-hour codewalk, probably every Wednesday
+  - A half-hour codewalk, every Wednesday (except tomorrow, 9/25)
 
 Course staff:
 
@@ -13,26 +13,21 @@ Course staff:
     - Jesse Tov, jesse@cs
     - Robby Findler, robby@cs
 
-  TA:
-    - Lukas Lazarek, LukasLazarek2018@u.northwestern.edu
-
 Homeworks:
-  - Due every Tuesday evening
+  - Four steps: pull request, revision, codewalk, rerevision
+    (details in schedule.md)
   - Pair programmed
   - Late homework won’t be accepted. Period.
-  - Will be graded in codewalk on (probably) Wednesday
-  - You will get check+, check, check-, or 0 in each of several categories
-  - Your whole homework grade comes from the codewalks
 
 Pair programming:
   - You will have a partner, assigned by the course staff.
-  - Your partner will change several times.
-  - You must do all work in this course with your partner, pair
-    programming.
-  - This means you’re in the same place, one person typing (the pilot)
-    and one person helping (the co-pilot). Switch roles frequently.
+  - Your partner will change each week.
+  - You must do all work in this course with your partner, pair programming.
+  - This means you’re in the same place, one person typing
+    and one person providing an overview. Switch roles frequently.
   - You will present your code together, and each of you
     is responsible for all the code.
+  - No divide and conquer or you will get bad grades
 
 Grading (tentative):
   - code walks: 70%
@@ -43,10 +38,11 @@ Cheating
 
   - You and your partner are jointly responsible for all code you turn in.
   - You cannot use code from other students or the web--you must
-    write it yourself.
+    write all of it yourself.
   - If you turn in stolen code, both you and your partner are
     responsible, even if your partner stole it and you didn’t know.
   - If you allow someone to steal your code, you are equally
     responsible.
   - Possible penalties range from a 0 on the stolen assignment to
-    failing the class to being asked to leave the program.
+    failing the class to being asked to leave the program.  We will
+    involve the dean in making the decision about the punishment
