@@ -95,20 +95,3 @@ New design recipe:
     [(string=? light "red")    "rouge"]
     [(string=? light "amber")  "jaune"]
     [(string=? light "green")  "vert"]))
-
-;; [interval itemization]
-; A BMINumber is one of:
-; - less than 20
-; - in [20, 25)
-; - in [25, 32)
-; - 32 or more
-
-; process-BMI-number : BMINumber ... -> ...
-; Template for BMI Number
-#;
-(define (process-BMI-number n ...)
-  (cond
-    [(< n 20) ...]
-    [(< n 25) ...]
-    [(< n 32) ...]
-    [else     ...]))
