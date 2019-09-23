@@ -13,8 +13,8 @@ you. One way to think of this is that it is an entire set of tools
 whose only job is "undo". Yes, undo has left the editor and become its
 own thing!
 
-You can think of the history of the project as have a series of
-discrete moments in time:
+You can think of the history of your code as a series of discrete
+moments in time:
 
 ```
   o -- o -- o -- o -- o
@@ -27,7 +27,8 @@ moment. It isn't just a diff or something -- think of each bubble as
 its own entire copy of everything (of course, things are stored more
 efficiently internally but we don't have to care about that). The
 commits also have a special code associated with them, called a
-"sha". It looks like a long base16 number (ie 40 digits).
+"sha". It looks like a long base16 number, e.g.
+e8f9386132c99b5b390ad9cb45a2b11758e18bfd.
 
 You can go back and forth and examine the history of your project
 using git. And, of course, if you go back to an earlier version and
@@ -59,7 +60,7 @@ or even this:
 
 Note that there is NO WAY to modify this tree. You can only add things
 to it. There is also a notion of garbage collection, where you can
-"forget" parts of the tree. But that's a detail. MORALLY, the tree is
+"forget" parts of the tree. But that's a detail. Morally, the tree is
 immutable. It just exists.
 
 In order to help you keep track of all of this history, you can
