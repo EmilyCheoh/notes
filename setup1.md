@@ -29,6 +29,13 @@ files are downloading (below).
 
 Setup instructions vary by platform:
 
+  - [Linux, etc.](#linux-etc)
+
+  - [Mac OS](#mac-os)
+
+  - [Windows](#windows)
+
+
 ## Windows
 
 You will need to download:
