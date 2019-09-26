@@ -397,9 +397,9 @@ of available *selector expressions*:
 (check-expect (cg-tick (make-cgw (+ 60 SHRINK-RATE) 325))
               (make-cgw 60 325))
 (check-expect (cg-tick (make-cgw 1 325))
-              (make-cgw 0 325))                       
+              (make-cgw 0 325))
 (check-expect (cg-tick (make-cgw 0 325))
-              (make-cgw 0 325))                       
+              (make-cgw 0 325))
 
 ; cg-mouse : CGWorld Number Number MouseEvt -> CGWorld
 ; Handles mouse events, responding to clicks in the circle.
@@ -634,6 +634,6 @@ Making a template (for struct. decomp. strategy):
 
 (check-expect (render-animal bob)
               (overlay
-               (text "Bob the Iguana" 12 "black")        
+               (text "Bob the Iguana" 12 "black")
                (circle (* 10 (sqrt 0.5)) "solid" "green")))
 
