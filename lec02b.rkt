@@ -67,6 +67,29 @@ During coding, multiple clauses with the same answer may be collapsed.
 
 |#
 
+
+;
+;
+;
+;
+;     ;;;;;
+;    ;;;;;;;
+;    ;;   ;;
+;   ;;     ;;  ;;  ;;;       ;;;;
+;   ;;     ;;  ;;;;;;;;    ;;   ;;
+;   ;;     ;;  ;;;   ;;;   ;     ;;
+;   ;;     ;;  ;;     ;;  ;;     ;;
+;   ;;     ;;  ;;     ;;  ;;;;;;;;;
+;   ;;     ;;  ;;     ;;  ;;
+;   ;;     ;;  ;;     ;;  ;;
+;    ;;   ;;   ;;     ;;   ;
+;    ;;;;;;;   ;;     ;;   ;;    ;;
+;     ;;;;;    ;;     ;;     ;;;;;
+;
+;
+;
+;
+
 ;;
 ;; Part 1: A circle game
 ;;
@@ -224,6 +247,30 @@ During coding, multiple clauses with the same answer may be collapsed.
  (on-tick circ-step)
  (on-mouse circ-mouse))
 
+
+;
+;
+;
+;
+;   ;;;;;;;;;;
+;   ;;;;;;;;;;
+;       ;;
+;       ;;    ;;       ;;   ;;;;;
+;       ;;    ;;       ;;  ;;;;;;;
+;       ;;     ;;     ;;  ;;;   ;;;
+;       ;;     ;;  ;  ;;  ;;     ;;
+;       ;;     ;; ;;; ;;  ;;     ;;
+;       ;;     ;; ; ; ;;  ;;     ;;
+;       ;;      ;;; ;;;   ;;     ;;
+;       ;;      ;;; ;;;   ;;;   ;;;
+;       ;;      ;;   ;;    ;;;;;;;
+;       ;;      ;;   ;;     ;;;;;
+;
+;
+;
+;
+
+
 ;;
 ;; Part 2: adding structure
 ;;
@@ -375,7 +422,7 @@ of available *selector expressions*:
               (make-cgw 100 17))
 (check-expect (cg-mouse (make-cgw 100 17) CCX CCY "button-up")
               (make-cgw (+ 100 GROW-RATE) 18))
-              
+
 
 ; cg-mouse-click : CGWorld Number Number -> CGWorld
 ; Updates the world based on a mouse click.
@@ -420,6 +467,32 @@ of available *selector expressions*:
 
 
 
+;
+;
+;
+;              ;;
+;   ;;;;;;;;;; ;;
+;   ;;;;;;;;;; ;;
+;       ;;     ;;
+;       ;;     ;;  ;;;      ;;  ;;      ;;;;       ;;;;
+;       ;;     ;;;;;;;;     ;; ;;;;   ;;   ;;    ;;   ;;
+;       ;;     ;;;   ;;;    ;;;   ;   ;     ;;   ;     ;;
+;       ;;     ;;     ;;    ;;       ;;     ;;  ;;     ;;
+;       ;;     ;;     ;;    ;;       ;;;;;;;;;  ;;;;;;;;;
+;       ;;     ;;     ;;    ;;       ;;         ;;
+;       ;;     ;;     ;;    ;;       ;;         ;;
+;       ;;     ;;     ;;    ;;        ;          ;
+;       ;;     ;;     ;;    ;;        ;;    ;;   ;;    ;;
+;       ;;     ;;     ;;    ;;          ;;;;;      ;;;;;
+;
+;
+;
+;
+
+;;
+;; Part 3: Template rules
+;;
+
 #|
 Making a template (for struct. decomp. strategy):
   I) Do you have an enumeration? If so, cond with right number of clauses
@@ -451,7 +524,34 @@ Making a template (for struct. decomp. strategy):
     [(string=? a-vertebrate "Bird")       ...]))
 
 
-;; A build-in class of data:
+
+;
+;
+;
+;
+;    ;;;;;;;;
+;    ;;;;;;;;
+;    ;;
+;    ;;          ;;;;;    ;;     ;;    ;;  ;;
+;    ;;         ;;;;;;;   ;;     ;;    ;; ;;;;
+;    ;;;;;;;   ;;;   ;;;  ;;     ;;    ;;;   ;
+;    ;;        ;;     ;;  ;;     ;;    ;;
+;    ;;        ;;     ;;  ;;     ;;    ;;
+;    ;;        ;;     ;;  ;;     ;;    ;;
+;    ;;        ;;     ;;  ;;     ;;    ;;
+;    ;;        ;;;   ;;;  ;;;   ;;;    ;;
+;    ;;         ;;;;;;;    ;;;;;;;;    ;;
+;    ;;          ;;;;;      ;;;  ;;    ;;
+;
+;
+;
+;
+
+;;
+;; Part 4: More data definitions
+;;
+
+;; A built-in class of data:
 ;; ; A Posn is (make-posn Number Number)
 ;; ; interp. the point (x, y) in R^2
 ;; (define-struct posn (x y))
